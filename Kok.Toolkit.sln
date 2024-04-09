@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kok.Toolkit.Core", "src\Kok.Toolkit.Core\Kok.Toolkit.Core.csproj", "{FEB89FC0-0E00-4A54-8559-6F6C2661A0D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kok.Toolkit.Test", "test\Kok.Toolkit.Test\Kok.Toolkit.Test.csproj", "{F1406B08-C252-482F-9895-8CBED699F956}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4B54CA2B-5872-4C91-8B32-B9FFEE8EFB82}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FEB89FC0-0E00-4A54-8559-6F6C2661A0D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEB89FC0-0E00-4A54-8559-6F6C2661A0D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEB89FC0-0E00-4A54-8559-6F6C2661A0D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEB89FC0-0E00-4A54-8559-6F6C2661A0D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1406B08-C252-482F-9895-8CBED699F956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1406B08-C252-482F-9895-8CBED699F956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1406B08-C252-482F-9895-8CBED699F956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1406B08-C252-482F-9895-8CBED699F956}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF7FE6AE-355E-487B-A09A-0A14B61D089E}
+	EndGlobalSection
+EndGlobal
