@@ -1,4 +1,4 @@
-﻿namespace Kok.Toolkit.Log;
+﻿namespace Kok.Toolkit.Core.Log;
 
 /// <summary>
 /// 不同等级的日志输出到不同的文件

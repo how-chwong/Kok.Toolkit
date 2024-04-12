@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Kok.Toolkit.Log;
+namespace Kok.Toolkit.Core.Log;
 
 /// <summary>
 /// 日志

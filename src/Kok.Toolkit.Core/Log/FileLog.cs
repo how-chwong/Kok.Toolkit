@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using System.Text;
 
-namespace Kok.Toolkit.Log;
+namespace Kok.Toolkit.Core.Log;
 
 /// <summary>
 /// 文本文件日志
@@ -13,17 +12,17 @@ public class FileLog : Logger, IDisposable
     /// <summary>
     /// 单个日志文件的最大文件大小，单位kb
     /// </summary>
-    public long MaxFileSizeInKb { get; } = 10240;
+    public long MaxFileSizeInKb { get; private set; } = 102400;
 
     /// <summary>
     /// 目录下允许同时存在的最大文件个数
     /// </summary>
-    public int MaxFileCount { get; } = 50;
+    public int MaxFileCount { get; private set; } = 10;
 
     /// <summary>
     /// 日志文件所在目录
     /// </summary>
-    public string RootPath { get; } = "Logs";
+    public string RootPath { get; private set; } = "Logs";
 
     /// <summary>
     /// 日志的二级目录
@@ -41,7 +40,7 @@ public class FileLog : Logger, IDisposable
     /// {1}：日志级别，包含该格式表示日志按级别分文件存储；
     /// {2}:文件索引,包含该格式表示限制当天日志文件的大小，超过允许的最大值则生成新文件存储
     /// </summary>
-    public string FileNameFormat { get; } = "{0:yyyyMMdd}.{1}.{2}.log";
+    public string FileNameFormat { get; private set; } = "{0:yyyyMMdd}.{1}.{2}.log";
 
     /// <summary>
     /// 是否单文件存储
@@ -67,15 +66,7 @@ public class FileLog : Logger, IDisposable
     {
         MinLogLevel = LogLevel.Info;
         var config = ReadConfig();
-        if (config != null)
-        {
-            Enable = config.TextFileLogConfig.Enable;
-            MinLogLevel = config.TextFileLogConfig.MinLogLevel;
-            MaxFileSizeInKb = config.TextFileLogConfig.MaxFileSizeInKb < 1024 ? 1024 : config.TextFileLogConfig.MaxFileSizeInKb;
-            MaxFileCount = config.TextFileLogConfig.MaxFileCount < 10 ? 10 : config.TextFileLogConfig.MaxFileCount;
-            FileNameFormat = string.IsNullOrWhiteSpace(config.TextFileLogConfig.FileNameFormat) ? FileNameFormat : config.TextFileLogConfig.FileNameFormat;
-            RootPath = string.IsNullOrWhiteSpace(config.TextFileLogConfig.RootPath) ? RootPath : config.TextFileLogConfig.RootPath;
-        }
+        InitConfig(config?.TextFileLogConfig);
         if (!Directory.Exists(RootPath)) Directory.CreateDirectory(RootPath);
         _timer = new Timer(DoLogWork, null, 0, 5000);
     }
@@ -89,14 +80,21 @@ public class FileLog : Logger, IDisposable
     {
         MinLogLevel = level;
         Enable = true;
-        config ??= new TextFileLogConfig();
+        InitConfig(config);
+        if (!Directory.Exists(RootPath)) Directory.CreateDirectory(RootPath);
+        _timer = new Timer(DoLogWork, null, 0, 5000);
+    }
+
+    private void InitConfig(TextFileLogConfig? config)
+    {
+        if (config == null) return;
+
+        Enable = config.Enable;
+        MinLogLevel = config.MinLogLevel;
         MaxFileSizeInKb = config.MaxFileSizeInKb < 1024 ? 1024 : config.MaxFileSizeInKb;
         MaxFileCount = config.MaxFileCount < 10 ? 10 : config.MaxFileCount;
         FileNameFormat = string.IsNullOrWhiteSpace(config.FileNameFormat) ? FileNameFormat : config.FileNameFormat;
         RootPath = string.IsNullOrWhiteSpace(config.RootPath) ? RootPath : config.RootPath;
-
-        if (!Directory.Exists(RootPath)) Directory.CreateDirectory(RootPath);
-        _timer = new Timer(DoLogWork, null, 0, 5000);
     }
 
     private readonly Timer _timer;
@@ -127,10 +125,23 @@ public class FileLog : Logger, IDisposable
     /// </summary>
     private void DoLogWork(object? state)
     {
-        if (Interlocked.Exchange(ref _writing, 1) == 0) WriteFile();
+        if (Interlocked.Exchange(ref _writing, 1) == 0)
+        {
+            try
+            {
+                WriteFile();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _writing, 0);
+            }
+        }
 
         DeleteLogFile();
-        Interlocked.Exchange(ref _writing, 0);
     }
 
     private StreamWriter? _writer;
@@ -173,12 +184,13 @@ public class FileLog : Logger, IDisposable
 
         while (_logQueue.TryDequeue(out var log))
         {
-            _writer.Write(log.Content);
+            _writer.Write($"{log.Content}");
             _writer.WriteLine();
         }
 
         _writer?.Flush();
         _writer?.Dispose();
+        _writer = null;
     }
 
     /// <summary>
@@ -189,7 +201,7 @@ public class FileLog : Logger, IDisposable
     {
         var time = DateTime.Now;
         if (!IsLimitFile || MaxFileSizeInKb == 0)
-            return Path.Combine(LogDirectory, string.Format(FileNameFormat, time, MinLogLevel)); ;
+            return Path.Combine(LogDirectory, string.Format(FileNameFormat, time, MinLogLevel));
 
         for (var i = 1; i < int.MaxValue; i++)
         {
@@ -210,8 +222,8 @@ public class FileLog : Logger, IDisposable
             return;
 
         var files = new DirectoryInfo(LogDirectory)
-            .GetFiles($"*{Path.GetExtension(FileNameFormat)}")
-            .OrderBy(f => f.LastWriteTime).ToList();
+            .GetFiles($"*{MinLogLevel}*{Path.GetExtension(FileNameFormat)}")
+            .OrderBy(f => f.CreationTime).ToList();
         if (files.Count <= MaxFileCount)
             return;
 
@@ -220,6 +232,7 @@ public class FileLog : Logger, IDisposable
         {
             try
             {
+                Console.WriteLine($"{files[i].FullName}被删除");
                 File.Delete(files[i].FullName);
             }
             catch (Exception)
@@ -234,5 +247,7 @@ public class FileLog : Logger, IDisposable
         _timer.Change(-1, int.MaxValue);
         _timer.Dispose();
         DoLogWork(null);
+        _writer?.Dispose();
+        _writer = null;
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Kok.Toolkit.Core.Extension;
+﻿namespace Kok.Toolkit.Core.Extension;
 
 /// <summary>
 /// 程序集扩展

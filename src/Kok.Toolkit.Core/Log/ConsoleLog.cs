@@ -1,4 +1,4 @@
-﻿namespace Kok.Toolkit.Log;
+﻿namespace Kok.Toolkit.Core.Log;
 
 /// <summary>
 /// 控制台日志

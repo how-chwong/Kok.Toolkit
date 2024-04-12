@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Kok.Toolkit.Log;
+namespace Kok.Toolkit.Core.Log;
 
 public static class Tracker
 {

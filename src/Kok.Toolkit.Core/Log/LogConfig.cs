@@ -1,4 +1,4 @@
-﻿namespace Kok.Toolkit.Log;
+﻿namespace Kok.Toolkit.Core.Log;
 
 /// <summary>
 /// 日志配置
@@ -46,7 +46,7 @@ public class TextFileLogConfig : ConsoleLogConfig
     /// 单文件允许的最大文件大小，单位KB
     /// 最小值为1024
     /// </summary>
-    public long MaxFileSizeInKb { get; set; } = 102400;
+    public long MaxFileSizeInKb { get; set; } = 100;
 
     /// <summary>
     /// 根目录下允许的最大文件个数

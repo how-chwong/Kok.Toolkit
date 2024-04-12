@@ -34,4 +34,46 @@ public interface ILog
     /// </summary>
     /// <param name="message">日志信息</param>
     void Fatal(string message);
+
+    /// <summary>
+    /// 修改最小日志级别
+    /// </summary>
+    /// <param name="level"></param>
+    void ChangeMiniLevel(LogLevel level);
+}
+
+/// <summary>
+/// 日志级别
+/// </summary>
+public enum LogLevel : byte
+{
+    /// <summary>
+    /// 所有日志
+    /// </summary>
+    All,
+
+    /// <summary>
+    /// 调试
+    /// </summary>
+    Debug,
+
+    /// <summary>
+    /// 信息
+    /// </summary>
+    Info,
+
+    /// <summary>
+    /// 警告
+    /// </summary>
+    Warn,
+
+    /// <summary>
+    /// 错误
+    /// </summary>
+    Error,
+
+    /// <summary>
+    /// 致命
+    /// </summary>
+    Fatal
 }
