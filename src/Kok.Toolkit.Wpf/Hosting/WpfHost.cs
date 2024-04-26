@@ -51,7 +51,7 @@ public class WpfHost : IDisposable
     {
         var win = Ioc.Default.GetService<T>();
         if (win != null) win.Show();
-        else MessageBox.Show($"初始化失败，未发现指定启动类型：{typeof(T).Name}");
+        else MessageBox.Show($"初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{args}");
     }
 
     public async Task StopAsync()

@@ -5,7 +5,7 @@ namespace Kok.Test.ConsoleLog
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             Console.WriteLine("Hello, Kok!");
             Console.WriteLine("This is a test project for ConsoleLog");

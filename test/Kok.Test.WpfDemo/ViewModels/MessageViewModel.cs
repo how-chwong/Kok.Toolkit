@@ -6,7 +6,7 @@ namespace Kok.Test.WpfDemo.ViewModels;
 public partial class MessageViewModel : MessengerViewModel<AlarmMessage>
 {
     [ObservableProperty]
-    private string _message;
+    private string? _message;
 
     protected override void OnGotMessage(object receiver, AlarmMessage message)
     {

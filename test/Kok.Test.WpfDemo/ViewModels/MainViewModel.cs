@@ -28,6 +28,6 @@ public partial class MainViewModel : MessengerViewModel<AlarmMessage>
     private void ShowLogWin()
     {
         var win = Ioc.Default.GetService<LogMonitorView>();
-        win.Show();
+        win?.Show();
     }
 }
