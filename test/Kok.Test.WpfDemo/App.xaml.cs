@@ -1,4 +1,4 @@
-﻿using Kok.Test.WpfDemo.services;
+﻿using Kok.Test.WpfDemo.Services;
 using Kok.Test.WpfDemo.Views;
 using Kok.Toolkit.Wpf.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,11 +20,14 @@ public partial class App : Application
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         _host = new WpfHost(e.Args).ConfigureServices(AddServices);
         await _host.StartAsync();
+
+        //启动主窗口
         _host.Run<MainWindow>(e.Args);
     }
 
     private void AddServices(IServiceCollection services)
     {
+        services.AddDialogService();
         services.AddViewModels();
         services.AddViews("Kok.Test.WpfDemo.Views");
         services.AddSingleton<IMyService, MyService>();

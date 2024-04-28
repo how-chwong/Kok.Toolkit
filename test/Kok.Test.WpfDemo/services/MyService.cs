@@ -1,4 +1,4 @@
-﻿namespace Kok.Test.WpfDemo.services;
+﻿namespace Kok.Test.WpfDemo.Services;
 
 public interface IMyService
 {

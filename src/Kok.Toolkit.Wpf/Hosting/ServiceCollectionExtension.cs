@@ -1,4 +1,5 @@
-﻿using Kok.Toolkit.Wpf.Mvvm;
+﻿using Kok.Toolkit.Wpf.Dialogs;
+using Kok.Toolkit.Wpf.Mvvm;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kok.Toolkit.Wpf.Hosting;
@@ -37,4 +38,12 @@ public static class ServiceCollectionExtension
 
         return services;
     }
+
+    /// <summary>
+    /// 向IOC容器注入单例的对话框服务
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddDialogService(this IServiceCollection services)
+        => services.AddSingleton<IDialogService, DialogService>();
 }

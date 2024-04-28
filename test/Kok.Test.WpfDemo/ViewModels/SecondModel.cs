@@ -1,27 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kok.Test.WpfDemo.services;
+using Kok.Test.WpfDemo.Services;
 using Kok.Toolkit.Wpf.Mvvm;
 using System.Windows;
 
-namespace Kok.Test.WpfDemo.ViewModels
+namespace Kok.Test.WpfDemo.ViewModels;
+
+public partial class SecondModel : ViewModel
 {
-    public partial class SecondModel : ViewModel
+    private readonly IMyService _service;
+
+    public SecondModel(IMyService service)
     {
-        private readonly IMyService _service;
+        _service = service;
+    }
 
-        public SecondModel(IMyService service)
-        {
-            _service = service;
-        }
+    [ObservableProperty]
+    private string? _name;
 
-        [ObservableProperty]
-        private string? _name;
-
-        [RelayCommand]
-        private void SayHello()
-        {
-            MessageBox.Show(_service.SayHello(_name ?? "vm"));
-        }
+    [RelayCommand]
+    private void SayHello()
+    {
+        MessageBox.Show(_service.SayHello(_name ?? "vm"));
     }
 }

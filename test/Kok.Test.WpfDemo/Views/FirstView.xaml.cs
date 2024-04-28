@@ -1,5 +1,4 @@
-﻿using Kok.Test.WpfDemo.services;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Kok.Test.WpfDemo.Views
 {
@@ -8,7 +7,7 @@ namespace Kok.Test.WpfDemo.Views
     /// </summary>
     public partial class FirstView : Window
     {
-        public FirstView(IMyService service)
+        public FirstView()
         {
             InitializeComponent();
         }
