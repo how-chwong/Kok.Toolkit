@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Kok.Toolkit.Wpf.Dialogs;
 
@@ -18,51 +19,54 @@ public sealed class DialogService : IDialogService
         {
             if (temp.WindowState == WindowState.Minimized)
                 temp.WindowState = WindowState.Normal;
-            if (!temp.IsVisible)
-                temp.Show();
+            if (!temp.IsVisible) temp.Show();
             temp.BringIntoView();
             temp.Activate();
             return;
         }
 
         var win = Ioc.Default.GetService<T>();
-        if (win != null)
+        if (win == null) throw new Exception($"尝试打开{nameof(T)}窗体失败，未在容器中发现该类型!");
+
+        win.Closed += (sender, e) =>
         {
-            win.Closed += (sender, e) =>
-            {
-                if (sender != null)
-                    _windows.TryRemove(sender.GetType(), out _);
-            };
-            _windows.TryAdd(typeof(T), win);
-            win.Show();
-        }
-        else
-        {
-            MessageBox.Show($"尝试打开{typeof(T)}窗体失败，未在容器中发现该类型!", "错误", MessageBoxButton.OK);
-        }
+            if (sender != null)
+                _windows.TryRemove(sender.GetType(), out _);
+        };
+        _windows.TryAdd(typeof(T), win);
+        win.Show();
     }
 
     ///<inheritdoc />
     public bool? ShowDialog<T>() where T : Window
     {
         var win = Ioc.Default.GetService<T>();
-        if (win != null)
-            return win.ShowDialog();
-
-        MessageBox.Show($"尝试打开{typeof(T)}窗体失败，未在容器中发现该类型!", "错误", MessageBoxButton.OK);
-        return false;
+        if (win == null) throw new Exception($"尝试打开{nameof(T)}窗体失败，未在容器中发现该类型!");
+        return win.ShowDialog();
     }
 
     ///<inheritdoc />
     public async Task<bool?> ShowDialogAsync<T>(object? parameter) where T : Window, IWithParameterWindow
     {
         var win = Ioc.Default.GetService<T>();
-        if (win != null)
-        {
-            await win.InitializeAsync(parameter);
-            return win.ShowDialog();
-        }
-        MessageBox.Show($"尝试打开{typeof(T)}窗体失败，未在容器中发现该类型!", "错误", MessageBoxButton.OK);
-        return false;
+        if (win == null) throw new Exception($"尝试打开{nameof(T)}窗体失败，未在容器中发现该类型!");
+
+        await win.InitializeAsync(parameter);
+        return await Dispatcher.CurrentDispatcher.InvokeAsync(() => win.ShowDialog());
+    }
+
+    public async Task ShowDialogAsync<TView, TViewModel>(object? parameter = null, Action<TViewModel>? callback = null)
+        where TView : Window, IWithParameterWindow
+        where TViewModel : class
+    {
+        var win = Ioc.Default.GetService<TView>();
+        var vm = Ioc.Default.GetService<TViewModel>();
+        if (win == null || vm == null)
+            throw new Exception($"尝试打开{nameof(TView)}/{nameof(TViewModel)}窗体失败，未在容器中发现该类型!");
+
+        win.DataContext = vm;
+        await win.InitializeAsync(parameter);
+        var result = await Dispatcher.CurrentDispatcher.InvokeAsync(() => win.ShowDialog());
+        if (result == true) callback?.Invoke(vm);
     }
 }

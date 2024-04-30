@@ -29,9 +29,7 @@ public class MessengerViewModel : ObservableRecipient
     /// <typeparam name="T">广播的消息类型</typeparam>
     /// <param name="message">广播的消息实例</param>
     protected void SendMessage<T>(T message) where T : class
-    {
-        Messenger.Send(message, nameof(T));
-    }
+        => Messenger.Send(message, nameof(T));
 }
 
 /// <summary>

@@ -26,7 +26,20 @@ public interface IDialogService
     /// <typeparam name="T"></typeparam>
     /// <param name="parameter"></param>
     /// <returns></returns>
-    Task<bool?> ShowDialogAsync<T>(object? parameter) where T : Window, IWithParameterWindow;
+    Task<bool?> ShowDialogAsync<T>(object? parameter)
+        where T : Window, IWithParameterWindow;
+
+    /// <summary>
+    /// 带参模态弹窗
+    /// </summary>
+    /// <typeparam name="TView">窗口类型</typeparam>
+    /// <typeparam name="TViewModel">窗口绑定的视图模型</typeparam>
+    /// <param name="parameter">参数</param>
+    /// <param name="callback">弹窗确认后的处理函数</param>
+    /// <returns></returns>
+    Task ShowDialogAsync<TView, TViewModel>(object? parameter = null, Action<TViewModel>? callback = null)
+        where TView : Window, IWithParameterWindow
+        where TViewModel : class;
 }
 
 /// <summary>
