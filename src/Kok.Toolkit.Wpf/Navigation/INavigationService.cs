@@ -8,18 +8,18 @@ namespace Kok.Toolkit.Wpf.Navigation;
 public interface INavigationService
 {
     /// <summary>
-    /// 当前显示的视图
+    /// 当前显示的视图模型
     /// </summary>
     ObservableObject? CurrentView { get; }
 
     /// <summary>
-    /// 导航到指定视图
+    /// 导航到指定视图模型
     /// </summary>
     /// <typeparam name="T">视图模型的类型</typeparam>
     void NavigateTo<T>() where T : ObservableObject;
 
     /// <summary>
-    /// 导航到指定视图
+    /// 导航到指定视图模型
     /// </summary>
     /// <param name="view">视图名称</param>
     void NavigateTo(string view);

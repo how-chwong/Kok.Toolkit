@@ -1,14 +1,34 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
-using Kok.Test.WpfDemo.Views;
-using Kok.Toolkit.Wpf.Dialogs;
+using Kok.Test.WpfDemo.Models;
 using Kok.Toolkit.Wpf.Mvvm;
+using Kok.Toolkit.Wpf.Navigation;
+using System.Collections.ObjectModel;
 
 namespace Kok.Test.WpfDemo.ViewModels;
 
 public partial class MainViewModel : MessengerViewModel<AlarmMessage>
 {
+    [ObservableProperty]
+    public ObservableCollection<MenuItem> _menus;
+
+    [ObservableProperty]
+    private MenuItem? _selectedItem;
+
+    partial void OnSelectedItemChanged(MenuItem? value)
+    {
+        if (value == null) return;
+        switch (value.type)
+        {
+            case ViewType.Dialog:
+                Navigation.NavigateTo<DialogDemoViewModel>();
+                break;
+
+            case ViewType.Message:
+                Navigation.NavigateTo("LogMonitorView");
+                break;
+        }
+    }
+
     [ObservableProperty]
     private string? _statusMessage;
 
@@ -18,26 +38,15 @@ public partial class MainViewModel : MessengerViewModel<AlarmMessage>
     }
 
     [ObservableProperty]
-    private MessageViewModel _otherModel;
+    private INavigationService _navigation;
 
-    private readonly IDialogService _dialogs;
-
-    public MainViewModel(IDialogService dialogs)
+    public MainViewModel(INavigationService navigation)
     {
-        _dialogs = dialogs;
-        OtherModel = new MessageViewModel();
+        Navigation = navigation;
+        Menus = new ObservableCollection<MenuItem>
+        {
+            new("对话框",ViewType.Dialog),
+            new("消息",ViewType.Message)
+        };
     }
-
-    [RelayCommand]
-    private void ShowLogWin() => _dialogs.Show<LogMonitorView>();
-
-    #region 带参数弹窗
-
-    [ObservableProperty]
-    private string? _text;
-
-    [RelayCommand]
-    private async void ShowParameterWin(object? args) => await _dialogs.ShowDialogAsync<ParameterView>(args);
-
-    #endregion 带参数弹窗
 }

@@ -22,11 +22,12 @@ public partial class App : Application
         await _host.StartAsync();
 
         //启动主窗口
-        _host.Run<MainWindow>(e.Args);
+        _host.Run<DemoView>(e.Args);
     }
 
     private void AddServices(IServiceCollection services)
     {
+        services.AddNavigationService();
         services.AddDialogService();
         services.AddViewModels();
         services.AddViews("Kok.Test.WpfDemo.Views");

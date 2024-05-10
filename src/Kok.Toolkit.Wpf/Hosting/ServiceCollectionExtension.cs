@@ -1,5 +1,6 @@
 ﻿using Kok.Toolkit.Wpf.Dialogs;
 using Kok.Toolkit.Wpf.Mvvm;
+using Kok.Toolkit.Wpf.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kok.Toolkit.Wpf.Hosting;
@@ -46,4 +47,12 @@ public static class ServiceCollectionExtension
     /// <returns></returns>
     public static IServiceCollection AddDialogService(this IServiceCollection services)
         => services.AddSingleton<IDialogService, DialogService>();
+
+    /// <summary>
+    /// 向IOC容器注入单例的导航服务
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddNavigationService(this IServiceCollection services)
+        => services.AddSingleton<INavigationService, NavigationService>();
 }
