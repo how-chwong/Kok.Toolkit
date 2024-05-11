@@ -63,46 +63,13 @@
                 DefaultWidth="130"
                 IsOpen="{Binding IsChecked, ElementName=MenuToggle}"
                 OpenCloseDuration="0:0:0.25">
-                <controls:HamburgerMenu.Resources>
-                    <Style TargetType="controls:HamburgerMenuItem">
-                        <Setter Property="Padding" Value="20,10" />
-                        <Setter Property="FontSize" Value="16" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Foreground" Value="#444" />
-                        <Style.Triggers>
-                            <EventTrigger RoutedEvent="MouseEnter">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-                                            Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"
-                                            To="#dbdbdb"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="MouseLeave">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-                                            Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                            To="Transparent"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="#1669bb" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Foreground" Value="#1669bb" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </controls:HamburgerMenu.Resources>
                 <controls:HamburgerMenu.Content>
                     <StackPanel Margin="10">
                         <controls:HamburgerMenuItem>
-                            <TextBlock Text="World" />
+                            <TextBlock Text="对话框示例" />
+                        </controls:HamburgerMenuItem>
+                        <controls:HamburgerMenuItem>
+                            <TextBlock Text="消息通知示例" />
                         </controls:HamburgerMenuItem>
                     </StackPanel>
                 </controls:HamburgerMenu.Content>

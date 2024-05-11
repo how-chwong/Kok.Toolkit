@@ -7,6 +7,9 @@
     xmlns:vm="clr-namespace:Kok.Test.WpfDemo.ViewModels">
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Controls/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type vm:DialogDemoViewModel}">
                 <views:DialogDemoView />
             </DataTemplate>

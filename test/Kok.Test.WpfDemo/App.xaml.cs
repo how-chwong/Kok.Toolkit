@@ -22,7 +22,7 @@ public partial class App : Application
         await _host.StartAsync();
 
         //启动主窗口
-        _host.Run<DemoView>(e.Args);
+        _host.Run<MainWindow>(e.Args);
     }
 
     private void AddServices(IServiceCollection services)
