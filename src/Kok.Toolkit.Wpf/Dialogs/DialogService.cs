@@ -26,6 +26,7 @@ public sealed class DialogService : IDialogService
         }
 
         var win = Ioc.Default.GetService<T>() ?? throw new Exception($"尝试打开{nameof(T)}窗体失败，未在容器中发现该类型!");
+        win.Owner = Application.Current.MainWindow;
         win.Closed += (sender, e) =>
         {
             if (sender != null)
@@ -39,6 +40,7 @@ public sealed class DialogService : IDialogService
     public bool? ShowDialog<T>() where T : Window
     {
         var win = Ioc.Default.GetService<T>() ?? throw new Exception($"尝试打开{nameof(T)}窗体失败，未在容器中发现该类型!");
+        win.Owner = Application.Current.MainWindow;
         return win.ShowDialog();
     }
 
@@ -46,6 +48,7 @@ public sealed class DialogService : IDialogService
     public async Task<bool?> ShowDialogAsync<T>(object? parameter) where T : Window, IWithParameterWindow
     {
         var win = Ioc.Default.GetService<T>() ?? throw new Exception($"尝试打开{nameof(T)}窗体失败，未在容器中发现该类型!");
+        win.Owner = Application.Current.MainWindow;
         await win.InitializeAsync(parameter);
         return await Dispatcher.CurrentDispatcher.InvokeAsync(() => win.ShowDialog());
     }
