@@ -21,11 +21,11 @@ public partial class MainViewModel : MessengerViewModel<AlarmMessage>
         switch (value.type)
         {
             case ViewType.Dialog:
-                Navigation.NavigateTo<DialogDemoViewModel>();
+                Navigation.ToView<DialogDemoView>();
                 break;
 
             case ViewType.Message:
-                Navigation.NavigateTo(nameof(LogMonitorView));
+                Navigation.ToView<LogMonitorView>();//<LogMonitorViewModel>();
                 break;
         }
     }

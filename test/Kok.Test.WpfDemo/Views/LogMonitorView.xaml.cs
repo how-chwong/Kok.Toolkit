@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Kok.Test.WpfDemo.ViewModels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Kok.Test.WpfDemo.Views
 {
@@ -12,7 +10,6 @@ namespace Kok.Test.WpfDemo.Views
         public LogMonitorView()
         {
             InitializeComponent();
-            //DataContext = Ioc.Default.GetService<LogMonitorViewModel>();
         }
     }
 }

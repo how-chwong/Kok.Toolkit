@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Kok.Test.WpfDemo.ViewModels;
+using System.Windows.Controls;
 
 namespace Kok.Test.WpfDemo.Views
 {
@@ -10,6 +12,7 @@ namespace Kok.Test.WpfDemo.Views
         public DialogDemoView()
         {
             InitializeComponent();
+            DataContext = Ioc.Default.GetService<DialogDemoViewModel>();
         }
     }
 }

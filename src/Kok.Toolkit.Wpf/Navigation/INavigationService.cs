@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Controls;
 
 namespace Kok.Toolkit.Wpf.Navigation;
 
@@ -8,23 +9,21 @@ namespace Kok.Toolkit.Wpf.Navigation;
 public interface INavigationService
 {
     /// <summary>
-    /// 当前显示的视图模型
+    /// 当前显示的视图
     /// </summary>
-    ObservableObject? CurrentView { get; }
+    UserControl? CurrentView { get; }
+
+    /// <summary>
+    /// 导航到指定视图
+    /// </summary>
+    /// <typeparam name="T">视图的类型</typeparam>
+    void ToView<T>() where T : UserControl;
 
     /// <summary>
     /// 导航到指定视图模型
     /// </summary>
     /// <typeparam name="T">视图模型的类型</typeparam>
-    void NavigateTo<T>() where T : ObservableObject;
-
-    /// <summary>
-    /// 导航到指定视图模型
-    /// </summary>
-    /// <param name="viewType">视图类型</param>
-    void NavigateTo(Type viewType);
-
-    void NavigateTo(string viewName);
+    void ToViewModel<T>() where T : ObservableObject;
 }
 
 /// <summary>
