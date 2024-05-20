@@ -13,6 +13,9 @@
             <DataTemplate DataType="{x:Type vm:DialogDemoViewModel}">
                 <views:DialogDemoView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LogMonitorViewModel}">
+                <views:LogMonitorView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

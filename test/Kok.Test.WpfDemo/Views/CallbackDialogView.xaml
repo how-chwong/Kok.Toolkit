@@ -1,0 +1,34 @@
+﻿<Window
+    x:Class="Kok.Test.WpfDemo.Views.CallbackDialogView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:kok="clr-namespace:Kok.Toolkit.Wpf.Dialogs;assembly=Kok.Toolkit.Wpf"
+    xmlns:local="clr-namespace:Kok.Test.WpfDemo.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Kok.Test.WpfDemo.ViewModels"
+    Title="CallbackDialogView"
+    Width="800"
+    Height="450"
+    d:DataContext="{d:DesignInstance Type=vm:CallbackDialogViewModel}"
+    kok:DialogCloser.DialogResult="{Binding DialogResult}"
+    mc:Ignorable="d">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel>
+            <TextBlock
+                x:Name="MyText"
+                FontSize="16"
+                Text="{Binding Name, StringFormat='{}传入名称:{0}'}" />
+            <Button
+                Margin="10"
+                Padding="5"
+                Command="{Binding MakeHelloCommand}"
+                Content="Say Hello!" />
+            <Button
+                Margin="10"
+                Padding="5"
+                Command="{Binding CloseCommand}"
+                Content="Close" />
+        </StackPanel>
+    </Grid>
+</Window>

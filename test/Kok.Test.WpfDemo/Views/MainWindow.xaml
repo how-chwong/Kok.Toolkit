@@ -10,10 +10,11 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     mc:Ignorable="d">
-    <!--<Window.DataContext>
-        <vm:MainViewModel />
-    </Window.DataContext>-->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -53,9 +54,10 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <controls:HamburgerMenu
+            <!--<controls:HamburgerMenu
                 Grid.Column="0"
                 Background="#f2f2f2"
                 BorderBrush="#dbdbdb"
@@ -69,27 +71,85 @@
                         <controls:HamburgerMenuItem Text="消息通知示例" />
                     </StackPanel>
                 </controls:HamburgerMenu.Content>
-            </controls:HamburgerMenu>
-            <ContentControl Grid.Column="1" Content="{Binding Navigation.CurrentView}" />
-        </Grid>
+            </controls:HamburgerMenu>-->
 
-        <!--<ListBox
-            VerticalAlignment="Top"
-            BorderThickness="0"
-            ItemsSource="{Binding Menus}"
-            SelectedItem="{Binding SelectedItem}">
-            <ListBox.Resources>
-                <DataTemplate DataType="{x:Type model:MenuItem}">
-                    <Border CornerRadius="15">
-                        <TextBlock
-                            Width="150"
-                            Margin="3"
-                            Block.TextAlignment="Center"
-                            Text="{Binding Title}" />
-                    </Border>
-                </DataTemplate>
-            </ListBox.Resources>
-        </ListBox>-->
+            <ListBox
+                VerticalAlignment="Top"
+                BorderThickness="0"
+                ItemsSource="{Binding Menus}"
+                SelectedItem="{Binding SelectedItem}"
+                Visibility="{Binding IsChecked, ElementName=MenuToggle, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <ListBox.Resources>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Setter Property="OverridesDefaultStyle" Value="True" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border>
+                                        <Border.Background>
+                                            <SolidColorBrush x:Name="BackgroundBrush" Color="Transparent" />
+                                        </Border.Background>
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+                                                        Storyboard.TargetName="BackgroundBrush"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="#dbdbdb"
+                                                        Duration="0:0:0.1" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+                                                        Storyboard.TargetName="BackgroundBrush"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="Transparent"
+                                                        Duration="0:0:0.1" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="#1429bb" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Foreground" Value="#1669bb" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <DataTemplate DataType="{x:Type model:MenuItem}">
+                        <Border Padding="10">
+                            <TextBlock
+                                Width="150"
+                                Margin="3"
+                                Padding="10"
+                                Background="Transparent"
+                                Block.TextAlignment="Center"
+                                FontSize="16"
+                                Text="{Binding Title}" />
+                        </Border>
+                    </DataTemplate>
+                </ListBox.Resources>
+            </ListBox>
+
+            <Border
+                Grid.Column="1"
+                Width="3"
+                BorderBrush="#f1eded"
+                BorderThickness="3"
+                Visibility="{Binding IsChecked, ElementName=MenuToggle, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <ContentControl Grid.Column="2" Content="{Binding Navigation.CurrentView}" />
+        </Grid>
 
         <StatusBar Grid.Row="2">
             <StatusBarItem>

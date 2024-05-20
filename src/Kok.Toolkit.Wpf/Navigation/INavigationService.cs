@@ -21,8 +21,10 @@ public interface INavigationService
     /// <summary>
     /// 导航到指定视图模型
     /// </summary>
-    /// <param name="view">视图名称</param>
-    void NavigateTo(string view);
+    /// <param name="viewType">视图类型</param>
+    void NavigateTo(Type viewType);
+
+    void NavigateTo(string viewName);
 }
 
 /// <summary>

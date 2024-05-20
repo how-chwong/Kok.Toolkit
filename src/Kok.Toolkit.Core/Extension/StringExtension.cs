@@ -179,6 +179,17 @@ public static class StringExtension
     }
 
     /// <summary>
+    /// 将文本字符串转化为对应的Type
+    /// </summary>
+    /// <param name="typeName">类型名称</param>
+    /// <returns></returns>
+    public static Type? ToType(this string typeName)
+    {
+        var types = Assembly.GetEntryAssembly()?.GetTypes();
+        return types?.FirstOrDefault(t => t.Name.Equals(typeName));
+    }
+
+    /// <summary>
     /// 计算表达式的数值
     /// </summary>
     /// <param name="expression"></param>

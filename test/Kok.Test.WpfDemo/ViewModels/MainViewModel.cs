@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kok.Test.WpfDemo.Models;
+using Kok.Test.WpfDemo.Views;
 using Kok.Toolkit.Wpf.Mvvm;
 using Kok.Toolkit.Wpf.Navigation;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ namespace Kok.Test.WpfDemo.ViewModels;
 public partial class MainViewModel : MessengerViewModel<AlarmMessage>
 {
     [ObservableProperty]
-    public ObservableCollection<MenuItem> _menus;
+    private ObservableCollection<MenuItem> _menus;
 
     [ObservableProperty]
     private MenuItem? _selectedItem;
@@ -24,7 +25,7 @@ public partial class MainViewModel : MessengerViewModel<AlarmMessage>
                 break;
 
             case ViewType.Message:
-                Navigation.NavigateTo("LogMonitorView");
+                Navigation.NavigateTo(nameof(LogMonitorView));
                 break;
         }
     }
