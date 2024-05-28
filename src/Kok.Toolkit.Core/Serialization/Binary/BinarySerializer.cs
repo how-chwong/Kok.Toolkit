@@ -272,7 +272,7 @@ public class BinarySerializer : IDisposable
             message = ex.Message;
         }
 
-        return bytes?.Length > 0;
+        return bytes.Length > 0;
     }
 
     /// <summary>

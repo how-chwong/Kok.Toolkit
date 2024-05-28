@@ -115,9 +115,8 @@ public class ObjectHandler : BinaryBaseHandler
         {
             if (string.IsNullOrWhiteSpace(itemCountAttr.Path))
                 return new PresetSize(PresetSizeType.SubItemCount, itemCountAttr.Value);
-            var itemCountProperty = propertyInfos.FirstOrDefault(p => p.Name.Equals(itemCountAttr.Path));
-            if (itemCountProperty == null)
-                throw new Exception($"指定的子项目数量路径{itemCountAttr.Path}不存在");
+            var itemCountProperty = propertyInfos.FirstOrDefault(p => p.Name.Equals(itemCountAttr.Path)) ??
+                                    throw new Exception($"指定的子项目数量路径{itemCountAttr.Path}不存在");
             var v = itemCountProperty.GetValue(value);
             if (v == null || !int.TryParse(v.ToString(), out var size))
                 throw new Exception($"子项目数量特性关联的{itemCountAttr.Path}值读取失败");
@@ -129,9 +128,7 @@ public class ObjectHandler : BinaryBaseHandler
         {
             if (string.IsNullOrWhiteSpace(byteLengthAttr.Path))
                 return new PresetSize(PresetSizeType.SubItemCount, byteLengthAttr.ByteLength);
-            var byteLengthProperty = propertyInfos.FirstOrDefault(p => p.Name.Equals(byteLengthAttr.Path));
-            if (byteLengthProperty == null)
-                throw new Exception("指定的字节长度路径不存在");
+            var byteLengthProperty = propertyInfos.FirstOrDefault(p => p.Name.Equals(byteLengthAttr.Path)) ?? throw new Exception("指定的字节长度路径不存在");
             var v = byteLengthProperty.GetValue(value);
             if (v == null || !int.TryParse(v.ToString(), out var size))
                 throw new Exception("字节长度特性关联值读取失败");
@@ -144,9 +141,7 @@ public class ObjectHandler : BinaryBaseHandler
             int length = 0;
             foreach (var name in sliceNumAttr.Path)
             {
-                var sliceProperty = propertyInfos.FirstOrDefault(p => p.Name.Equals(name));
-                if (sliceProperty == null)
-                    throw new Exception("指定的切片数量路径不存在");
+                var sliceProperty = propertyInfos.FirstOrDefault(p => p.Name.Equals(name)) ?? throw new Exception("指定的切片数量路径不存在");
                 var sliceValue = sliceProperty.GetValue(value);
                 length += (int?)sliceValue ?? throw new Exception("切片长度特性关联值读取失败");
             }

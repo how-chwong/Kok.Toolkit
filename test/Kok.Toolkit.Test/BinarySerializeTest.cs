@@ -21,6 +21,7 @@ public class BinarySerializeTest
         var r = BinarySerializer.Serialize(bytes, out var r1, out _);
         Assert.True(r);
         Assert.True(BinarySerializer.Deserialize<byte[]>(r1, out var d1, out _));
+        Assert.True(d1 != null);
         Assert.Equal(bytes.Length, d1.Length);
         for (var i = 0; i < bytes.Length; i++) Assert.Equal(bytes[i], d1[i]);
 
@@ -33,14 +34,14 @@ public class BinarySerializeTest
     [Fact]
     public void NullSerializeTest()
     {
-        Assert.False(BinarySerializer.Serialize<TestMessage<CmdData>>(null, out _, out _));
+        Assert.False(BinarySerializer.Serialize<TestMessage<CmdData>?>(null, out _, out _));
         var data = new TestMessage<CmdData>() { Data = new CmdData() { Count = 3, StateList = null } };
-        Assert.False(BinarySerializer.Serialize(data, out var bytes1, out _));
+        Assert.False(BinarySerializer.Serialize(data, out byte[] _, out _));
         data.Data.Count = 0;
         Assert.True(BinarySerializer.Serialize(data, out var bytes2, out _));
         Assert.True(
             BinarySerializer.Deserialize<TestMessage<CmdData>>(bytes2, out var data2, out _));
-        Assert.True(data2?.Data?.StateList.Count == data.Data.Count);
+        Assert.True(data2?.Data?.StateList?.Count == data.Data.Count);
     }
 
     [Fact]
@@ -53,6 +54,7 @@ public class BinarySerializeTest
         };
         Assert.True(BinarySerializer.Serialize(data, out var temp, out _));
         Assert.True(BinarySerializer.Deserialize<TestMessage<CmdData>>(temp, out var data1, out _));
+        Assert.True(data1?.Data?.StateList?.Count > 0);
         Assert.Equal(data.Data.StateList[1], data1.Data.StateList[1]);
     }
 }
@@ -73,5 +75,5 @@ public class CmdData
     public int Count { get; set; }
 
     [CollectionItemCount(nameof(Count))]
-    public List<byte> StateList { get; set; } = new();
+    public List<byte>? StateList { get; set; }
 }
