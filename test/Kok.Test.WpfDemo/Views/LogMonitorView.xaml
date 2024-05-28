@@ -1,0 +1,24 @@
+﻿<UserControl
+    x:Class="Kok.Test.WpfDemo.Views.LogMonitorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:viewModels="clr-namespace:Kok.Test.WpfDemo.ViewModels"
+    Width="800"
+    Height="450">
+    <UserControl.DataContext>
+        <viewModels:LogMonitorViewModel />
+    </UserControl.DataContext>
+    <Grid>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Closed">
+                <i:InvokeCommandAction Command="{Binding ClearDataCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Margin="5" Text="{Binding Content}" />
+            <TextBlock Margin="5" Text="{Binding Field}" />
+            <TextBlock Text="{Binding HasAlarm}" />
+        </StackPanel>
+    </Grid>
+</UserControl>
