@@ -15,8 +15,7 @@ public class GeneralHandler : BinaryBaseHandler
     /// <inheritdoc />
     public override bool Write(object? value, Type type, PresetSize? presetSize = null)
     {
-        if (type != typeof(string))
-            return false;
+        if (value == null && type != typeof(string)) return false;
         var temp = value ?? 0;
         switch (Type.GetTypeCode(type))
         {
@@ -90,10 +89,6 @@ public class GeneralHandler : BinaryBaseHandler
     /// <inheritdoc />
     public override bool TryRead(Type type, ref object? value, PresetSize? presetSize = null)
     {
-        if (value == null)
-            return false;
-        type = value.GetType();
-
         switch (Type.GetTypeCode(type))
         {
             case TypeCode.Empty:
@@ -272,7 +267,7 @@ public class GeneralHandler : BinaryBaseHandler
         if (presetLength <= 0)
             presetLength = Serializer.TryReadItemCount();
         var data = Serializer.Read(presetLength);
-        return Serializer.Encoding.GetString(data).TrimEmpty();
+        return Serializer.Encoding.GetString(data);
     }
 
     #endregion 读基元类型

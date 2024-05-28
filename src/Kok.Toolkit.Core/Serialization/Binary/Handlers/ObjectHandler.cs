@@ -42,15 +42,16 @@ public class ObjectHandler : BinaryBaseHandler
                 continue;
             if (property.HasAttribute<CrcStartByteAttribute>())
                 _crcStartByteLocations.Push((int)Serializer.StreamPosition);
-            if (HasCrc16Attribute(property, out var crc16))
+
+            if (type.IsNumericType() && HasCrc16Attribute(property, out var crc16))
             {
                 Serializer.Write(crc16);
             }
-            else if (HasCrc32Attribute(property, out var crc32))
+            else if (type.IsNumericType() && HasCrc32Attribute(property, out var crc32))
             {
                 Serializer.Write(crc32);
             }
-            else if (HasCrc8Attribute(property, out var crc8))
+            else if (type.IsNumericType() && HasCrc8Attribute(property, out var crc8))
             {
                 Serializer.Write(crc8);
             }

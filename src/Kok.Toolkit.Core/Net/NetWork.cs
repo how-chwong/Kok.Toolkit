@@ -117,10 +117,5 @@ public enum NetworkProtocol
     /// <summary>
     /// TCP
     /// </summary>
-    Tcp,
-
-    /// <summary>
-    /// HTTP
-    /// </summary>
-    Http
+    Tcp
 }

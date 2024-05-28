@@ -37,7 +37,7 @@ public class CollectionHandler : BinaryBaseHandler
                 if (byteLength < presetSize.Value)
                 {
                     for (var i = 0; i < presetSize.Value - byteLength; i++)
-                        Serializer.Write<byte>(0);
+                        Serializer.Write((byte)0);
                 }
 
                 if (temp is { Length: > 0 } && temp.Length > presetSize.Value)
@@ -51,8 +51,10 @@ public class CollectionHandler : BinaryBaseHandler
 
         if (value == null)
         {
-            if (presetSize == null || !presetSize.HasPresetSize())
-                Serializer.WriteItemCount(0);
+            if (presetSize != null && presetSize.HasPresetSize())
+                throw new Exception($"类型为{type.Name}的集合指定了预设大小，但未赋值");
+
+            Serializer.WriteItemCount(0);
             return true;
         }
 
@@ -67,15 +69,15 @@ public class CollectionHandler : BinaryBaseHandler
         {
             if (presetSize.Type == PresetSizeType.SubItemCount && list.Count != presetSize.Value)
                 throw new Exception($"{type.Name}实例给定数量{list.Count}与预设项目数量{presetSize}不符");
-
-            var startBytes = Serializer.StreamPosition;
-            foreach (var item in list)
-                Serializer.Write(item, item.GetType());
-
-            var byteCount = Serializer.StreamPosition - startBytes;
-            if (presetSize is { Type: PresetSizeType.ByteLength } && byteCount != presetSize.Value)
-                throw new ArgumentOutOfRangeException(type.Name, $"{type.Name}实例给定字节数{byteCount}与预设字节数量{presetSize.Value}不符");
         }
+        var startBytes = Serializer.StreamPosition;
+        foreach (var item in list)
+            Serializer.Write(item, item.GetType());
+
+        var byteCount = Serializer.StreamPosition - startBytes;
+        if (presetSize is { Type: PresetSizeType.ByteLength } && byteCount != presetSize.Value)
+            throw new ArgumentOutOfRangeException(type.Name, $"{type.Name}实例给定字节数{byteCount}与预设字节数量{presetSize.Value}不符");
+
         return true;
     }
 

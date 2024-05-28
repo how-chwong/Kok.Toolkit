@@ -61,7 +61,7 @@ public class PresetSize
     /// 判断是否有预设值
     /// </summary>
     /// <returns></returns>
-    public bool HasPresetSize() => Type != PresetSizeType.None && Value >= 0;
+    public bool HasPresetSize() => Type != PresetSizeType.None && Value > 0;
 }
 
 /// <summary>

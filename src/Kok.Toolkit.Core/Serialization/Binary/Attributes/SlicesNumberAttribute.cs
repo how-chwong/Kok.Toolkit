@@ -11,7 +11,7 @@ public class SlicesNumberAttribute : Attribute
     /// <summary>
     /// 切片数量关联的属性路径
     /// </summary>
-    public string[] Path { get; set; } = Array.Empty<string>();
+    public string[] Path { get; } = Array.Empty<string>();
 
     /// <summary>
     /// 构造一个集合切片数量特性

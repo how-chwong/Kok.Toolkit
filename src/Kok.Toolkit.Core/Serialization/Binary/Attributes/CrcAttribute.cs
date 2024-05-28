@@ -11,7 +11,7 @@ public class Crc8Attribute : Attribute
     /// <summary>
     /// CRC
     /// </summary>
-    public Crc8Algorithm Algorithm { get; set; }
+    public Crc8Algorithm Algorithm { get; }
 
     /// <summary>
     /// 构造CRC-8特性
@@ -41,7 +41,7 @@ public class Crc16Attribute : Attribute
     /// <summary>
     /// CRC
     /// </summary>
-    public Crc16Algorithm Algorithm { get; set; }
+    public Crc16Algorithm Algorithm { get; }
 
     /// <summary>
     /// 构造CRC-16特性
@@ -71,7 +71,7 @@ public class Crc32Attribute : Attribute
     /// <summary>
     /// CRC
     /// </summary>
-    public Crc32Algorithm Algorithm { get; set; }
+    public Crc32Algorithm Algorithm { get; }
 
     /// <summary>
     /// 构造CRC-32特性

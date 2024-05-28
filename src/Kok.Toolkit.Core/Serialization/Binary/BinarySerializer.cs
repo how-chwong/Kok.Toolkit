@@ -100,7 +100,11 @@ public class BinarySerializer : IDisposable
     /// 写入集合内的Item数量
     /// </summary>
     /// <param name="value"></param>
-    public void WriteItemCount(int value) => Write(value);
+    public void WriteItemCount(int value)
+    {
+        var handler = GetHandler<GeneralHandler>();
+        handler.Write(value, typeof(int));
+    }
 
     /// <summary>
     /// 写入字节
@@ -120,7 +124,7 @@ public class BinarySerializer : IDisposable
     /// <param name="presetSize"></param>
     /// <returns></returns>
     public bool Write<T>(T value, PresetSize? presetSize = null)
-        => _handlerList.Any(handler => value != null && handler.Write(value, typeof(T), presetSize));
+        => _handlerList.Any(handler => handler.Write(value, typeof(T), presetSize));
 
     #endregion 写字节流
 

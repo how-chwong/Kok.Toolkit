@@ -10,12 +10,12 @@ public class CsvFile : IDisposable
     /// <summary>
     /// 文件编码
     /// </summary>
-    public Encoding Encoding { get; set; } = Encoding.UTF8;
+    public Encoding Encoding { get; } = Encoding.UTF8;
 
     /// <summary>
     /// 分隔符，默认逗号
     /// </summary>
-    public char Separator { get; set; } = ',';
+    public char Separator { get; } = ',';
 
     private readonly Stream? _steam;
 
