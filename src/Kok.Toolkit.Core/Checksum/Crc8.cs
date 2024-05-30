@@ -110,7 +110,7 @@ public static class Crc8
         /// <param name="length"></param>
         /// <returns></returns>
         public static byte Compute(byte[] data, int start, int length)
-            => Crc8.Compute(data, start, length, 0, s_table0X07, 0x00, false, false, 0x00);
+            => Crc8.Compute(data, start, length, 0, s_table0X07, 0, false, false, 0x00);
 
         /// <summary>
         /// 计算校验和
@@ -170,7 +170,7 @@ public static class Crc8
     }
 
     /// <summary>
-    /// CRC9-MAXIM 0x31
+    /// CRC8-MAXIM 0x31
     /// </summary>
     public static class Maxim
     {

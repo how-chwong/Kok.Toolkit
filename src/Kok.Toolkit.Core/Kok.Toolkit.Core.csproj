@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Authors>Kok</Authors>
+    <Authors>How Chwong</Authors>
     <Description>提供通用工具类，如二进制序列化/反序列化器、CRC校验码计算、日志记录、报文收发器、进程间通信器；也提供了若干常用的类型扩展方法</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

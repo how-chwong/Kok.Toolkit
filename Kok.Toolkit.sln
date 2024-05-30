@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kok.Test.ConsoleLog", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kok.Toolkit.Wpf", "src\Kok.Toolkit.Wpf\Kok.Toolkit.Wpf.csproj", "{FCD67EC2-E9D4-47F7-B718-0B8A706DB5CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kok.Test.WpfDemo", "test\Kok.Test.WpfDemo\Kok.Test.WpfDemo.csproj", "{BC71AB73-0808-44AF-AA59-D5FF9037621F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kok.Test.WpfDemo", "test\Kok.Test.WpfDemo\Kok.Test.WpfDemo.csproj", "{BC71AB73-0808-44AF-AA59-D5FF9037621F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kok.Test.TransmitterTest", "test\Kok.Test.TransmitterTest\Kok.Test.TransmitterTest.csproj", "{64ED07DF-50A4-43D6-A7B4-A09E271165C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,10 @@ Global
 		{BC71AB73-0808-44AF-AA59-D5FF9037621F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC71AB73-0808-44AF-AA59-D5FF9037621F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC71AB73-0808-44AF-AA59-D5FF9037621F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64ED07DF-50A4-43D6-A7B4-A09E271165C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64ED07DF-50A4-43D6-A7B4-A09E271165C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64ED07DF-50A4-43D6-A7B4-A09E271165C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64ED07DF-50A4-43D6-A7B4-A09E271165C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{F1406B08-C252-482F-9895-8CBED699F956} = {F0325E7B-968C-421D-BBA3-4A847F8099ED}
 		{1EC7FE50-798B-4E91-85AC-655D615D14AC} = {F0325E7B-968C-421D-BBA3-4A847F8099ED}
 		{BC71AB73-0808-44AF-AA59-D5FF9037621F} = {F0325E7B-968C-421D-BBA3-4A847F8099ED}
+		{64ED07DF-50A4-43D6-A7B4-A09E271165C1} = {F0325E7B-968C-421D-BBA3-4A847F8099ED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF7FE6AE-355E-487B-A09A-0A14B61D089E}

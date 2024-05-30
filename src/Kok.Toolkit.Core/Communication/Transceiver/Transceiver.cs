@@ -4,7 +4,6 @@ using Kok.Toolkit.Core.Net;
 using Kok.Toolkit.Core.Serialization.Binary;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 
 namespace Kok.Toolkit.Core.Communication.Transceiver;
 
@@ -149,7 +148,7 @@ public class Transceiver<T> where T : class, new()
                 Tracker.WriteWarn("收发器监控Socket已释放");
                 return;
             }
-            builder.FinalHandler?.Invoke(data, epa.FinalHandlerArgs);
+            builder.BeforeSendHandler?.Invoke(data, epa.FinalHandlerArgs);
             foreach (var item in data)
             {
                 var r = BinarySerializer.Serialize(item, out var bytes, out var message);

@@ -46,7 +46,7 @@ public sealed class TransmitterBuilder<T>
     /// <summary>
     /// 报文发送前的最后处理
     /// </summary>
-    public Action<List<T>, object[]?>? FinalHandler { get; private init; }
+    public Action<List<T>, object[]?>? BeforeSendHandler { get; private init; }
 
     /// <summary>
     /// 发送完成后的处理行为
@@ -66,28 +66,77 @@ public sealed class TransmitterBuilder<T>
         get => !TargetEndPoints.IsEmpty() && GenerateAction != null;
     }
 
-    public static TransmitterBuilder<TMessage>? Create<TMessage>(
+    /// <summary>
+    /// 创建一个周期性不间断发送的发报机构建器
+    /// </summary>
+    /// <typeparam name="TMessage">发报机发送的报文类型</typeparam>
+    /// <param name="targets">发送报文的目的地</param>
+    /// <param name="interval">周期发送时的发报间隔，单位毫秒</param>
+    /// <param name="generateAction">报文生成函数</param>
+    /// <param name="generateArgs">报文生成的入参</param>
+    /// <param name="beforeSend">报文发送前的处理函数</param>
+    /// <param name="afterSend">报文发送后的处理函数</param>
+    /// <returns></returns>
+    public static TransmitterBuilder<TMessage> CreateCyclical<TMessage>(
         List<TargetEndPoint> targets,
         int interval,
         Func<object?, List<TMessage>> generateAction,
-        object? generateArgs,
-        Action<List<TMessage>, object[]?>? finalHandler = null,
-        Func<bool>? judges = null,
-        int cycleCount = 0,
-        Action<IReadOnlyCollection<byte>, int, DateTime, EndPoint, object?>? afterSendHandler = null)
+        object? generateArgs = null,
+        Action<List<TMessage>, object[]?>? beforeSend = null,
+        Action<IReadOnlyCollection<byte>, int, DateTime, EndPoint, object?>? afterSend = null)
     {
-        if (targets.IsEmpty()) return null;
+        if (targets.IsEmpty()) throw new ArgumentException("目标地址不能为空", nameof(targets));
+        var builder = new TransmitterBuilder<TMessage>
+        {
+            GenerateAction = generateAction,
+            GenerateArgs = generateArgs,
+            BeforeSendHandler = beforeSend,
+            Interval = interval,
+            Type = TransmitterType.Cyclical,
+            TargetEndPoints = new List<TargetEndPoint>(targets.Count),
+            AfterSendHandler = afterSend
+        };
+        targets.ForEach(t => builder.TargetEndPoints.Add(t));
+        return builder;
+    }
+
+    /// <summary>
+    /// 创建一个仅发送固定几个周期的发报机构建器
+    /// </summary>
+    /// <typeparam name="TMessage">发报机发送的报文类型</typeparam>
+    /// <param name="targets">发送报文的目的地</param>
+    /// <param name="interval">周期发送时的发报间隔，单位毫秒</param>
+    /// <param name="generateAction">报文生成函数</param>
+    /// <param name="generateArgs">报文生成的入参</param>
+    /// <param name="beforeSend">报文发送前的处理函数</param>
+    /// <param name="judges">判定报文是否发送变化的函数</param>
+    /// <param name="cycleCount">非周期发送时，报文的发送次数</param>
+    /// <param name="afterSend">报文发送后的处理函数</param>
+    /// <returns></returns>
+    public static TransmitterBuilder<TMessage> CreateFixedCycle<TMessage>(
+        int cycleCount,
+        List<TargetEndPoint> targets,
+        int interval,
+        Func<object?, List<TMessage>> generateAction,
+        object? generateArgs = null,
+        Action<List<TMessage>, object[]?>? beforeSend = null,
+        Func<bool>? judges = null,
+        Action<IReadOnlyCollection<byte>, int, DateTime, EndPoint, object?>? afterSend = null)
+    {
+        if (targets.IsEmpty()) throw new ArgumentException("目标地址不能为空", nameof(targets));
+        if (cycleCount <= 0) throw new ArgumentException("固定周期数量的值不能为0", nameof(cycleCount));
+        if (judges == null) throw new ArgumentNullException(nameof(judges), "判定报文是否发生变化的方法不能为空");
         var builder = new TransmitterBuilder<TMessage>
         {
             ChangedJudges = judges,
             GenerateAction = generateAction,
             GenerateArgs = generateArgs,
-            FinalHandler = finalHandler,
+            BeforeSendHandler = beforeSend,
             Interval = interval,
             PeriodCount = cycleCount,
-            Type = cycleCount == 0 ? TransmitterType.Cyclical : TransmitterType.FixedCycle,
+            Type = TransmitterType.FixedCycle,
             TargetEndPoints = new List<TargetEndPoint>(targets.Count),
-            AfterSendHandler = afterSendHandler
+            AfterSendHandler = afterSend
         };
         targets.ForEach(t => builder.TargetEndPoints.Add(t));
         return builder;

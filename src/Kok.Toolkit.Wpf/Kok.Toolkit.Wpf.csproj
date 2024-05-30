@@ -5,7 +5,18 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>How Chwong</Authors>
+    <Description>基于CommunityToolkit.Mvvm实现了WPF下的MVVM，提供了视图模型基类、对话框服务、导航服务，并封装了通用WPFHost,也提供了若干常用的转换器等</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <AssemblyVersion>1.0.0-alpha</AssemblyVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
