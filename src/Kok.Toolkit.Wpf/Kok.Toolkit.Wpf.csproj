@@ -8,10 +8,19 @@
     <Authors>How Chwong</Authors>
     <Description>基于CommunityToolkit.Mvvm实现了WPF下的MVVM，提供了视图模型基类、对话框服务、导航服务，并封装了通用WPFHost,也提供了若干常用的转换器等</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <AssemblyVersion>1.0.0-alpha</AssemblyVersion>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <PackageProjectUrl>https://github.com/how-chwong/Kok.Toolkit</PackageProjectUrl>
+    <Version>1.0.1</Version>
+    <RepositoryUrl>https://github.com/how-chwong/Kok.Toolkit.git</RepositoryUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
