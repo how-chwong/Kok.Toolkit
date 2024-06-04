@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Kok.Toolkit.Wpf.Hosting;
 
+/// <summary>
+/// 容器扩展
+/// </summary>
 public static class ServiceCollectionExtension
 {
     /// <summary>

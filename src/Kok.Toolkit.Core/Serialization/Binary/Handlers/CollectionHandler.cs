@@ -7,6 +7,10 @@ namespace Kok.Toolkit.Core.Serialization.Binary.Handlers;
 /// </summary>
 public class CollectionHandler : BinaryBaseHandler
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="serializer"></param>
     public CollectionHandler(BinarySerializer serializer) : base(serializer)
     {
     }

@@ -30,6 +30,12 @@ public record Packet(DateTime ReceivedTime, string SourceAddress, int SourcePort
     /// </summary>
     public int Size => Data.Length;
 
+    /// <summary>
+    /// 截取部分数据作为切片
+    /// </summary>
+    /// <param name="start">截取起始索引</param>
+    /// <param name="length">截取长度</param>
+    /// <returns></returns>
     public byte[] Slice(int start, int length)
     {
         if (start > Size) return Array.Empty<byte>();

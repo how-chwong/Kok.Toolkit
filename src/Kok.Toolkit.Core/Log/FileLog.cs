@@ -242,6 +242,9 @@ public class FileLog : Logger, IDisposable
         }
     }
 
+    /// <summary>
+    /// 释放资源
+    /// </summary>
     public void Dispose()
     {
         _timer.Change(-1, int.MaxValue);

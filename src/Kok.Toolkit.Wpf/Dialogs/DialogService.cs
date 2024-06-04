@@ -44,6 +44,7 @@ public sealed class DialogService : IDialogService
     public async Task ShowDialogAsync<T>(Action<object>? callback) where T : Window
         => await ShowDialogInternalAsync<T>(null, callback);
 
+    ///<inheritdoc />
     public async Task ShowDialogAsync<T>(object? parameter, Action<object>? callback) where T : Window, IWithParameterWindow
         => await ShowDialogInternalAsync<T>(parameter, callback);
 

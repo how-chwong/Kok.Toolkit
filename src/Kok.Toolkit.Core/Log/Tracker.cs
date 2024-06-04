@@ -2,10 +2,16 @@
 
 namespace Kok.Toolkit.Core.Log;
 
+/// <summary>
+/// 日志跟踪器
+/// </summary>
 public static class Tracker
 {
     private static readonly ConcurrentDictionary<Type, Logger> s_loggers = new();
 
+    /// <summary>
+    /// 静态构造
+    /// </summary>
     static Tracker()
     {
         AddLogger(new LevelLog());

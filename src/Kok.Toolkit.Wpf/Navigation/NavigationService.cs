@@ -12,6 +12,9 @@ public class NavigationService : ObservableObject, INavigationService
 {
     private UserControl? _currentView;
 
+    /// <summary>
+    /// 当前视图
+    /// </summary>
     public UserControl? CurrentView
     {
         get => _currentView;

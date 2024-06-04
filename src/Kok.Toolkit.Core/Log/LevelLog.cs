@@ -35,6 +35,9 @@ public class LevelLog : Logger, IDisposable
         if (_logs.TryGetValue(level, out var log)) log.Write(level, message);
     }
 
+    /// <summary>
+    /// 释放资源
+    /// </summary>
     public void Dispose()
     {
         if (_logs.Count == 0) return;
