@@ -72,7 +72,7 @@ public class CollectionHandler : BinaryBaseHandler
         else
         {
             if (presetSize.Type == PresetSizeType.SubItemCount && list.Count != presetSize.Value)
-                throw new Exception($"{type.Name}实例给定数量{list.Count}与预设项目数量{presetSize}不符");
+                throw new Exception($"{type.Name}实例给定数量{list.Count}与预设项目数量{presetSize.Value}不符");
         }
         var startBytes = Serializer.StreamPosition;
         foreach (var item in list)
