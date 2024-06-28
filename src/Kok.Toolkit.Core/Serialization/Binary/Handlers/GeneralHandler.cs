@@ -198,8 +198,7 @@ public class GeneralHandler : BinaryBaseHandler
     private void Write(decimal value)
     {
         var data = decimal.GetBits(value);
-        for (var i = 0; i < data.Length; i++)
-            Write(i);
+        foreach (var d in data) Write(d);
     }
 
     private void Write(string value, int presetLength)
