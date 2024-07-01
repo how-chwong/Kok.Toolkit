@@ -56,6 +56,7 @@ public class BinarySerializeTest
         Assert.True(BinarySerializer.Deserialize<TestMessage<CmdData>>(temp, out var data1, out _));
         Assert.True(data1?.Data?.StateList?.Count > 0);
         Assert.Equal(data.Data.StateList[1], data1.Data.StateList[1]);
+        Assert.True(data1.Crc > 0);
     }
 }
 
@@ -64,6 +65,9 @@ public class TestMessage<T> where T : class, new()
     public byte Header { get; set; }
 
     public T? Data { get; set; }
+
+    [Crc16]
+    public ushort Crc { get; set; }
 }
 
 public class CmdData
