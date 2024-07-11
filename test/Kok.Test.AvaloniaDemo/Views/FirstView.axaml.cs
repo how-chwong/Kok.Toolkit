@@ -9,12 +9,6 @@ public partial class FirstView : Window
     public FirstView()
     {
         InitializeComponent();
-        WindowMessenger.Register<FirstViewModel, CloseWindowMessage>(this, m =>
-        {
-            // WindowMessenger.UnRegister<FirstViewModel, CloseWindowMessage>(this);
-            this.Close(true);
-        });
-        
-        Closed += (o, e) => WindowMessenger.UnRegister<FirstViewModel, CloseWindowMessage>(this);
+        WindowMessenger.ResponseCloseWinMessage<FirstViewModel>(this);
     }
 }

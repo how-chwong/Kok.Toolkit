@@ -11,8 +11,5 @@ public partial class FirstViewModel : MessengerViewModel
     private string _title = "First View";
 
     [RelayCommand]
-    public void CloseWindow()
-    {
-        WindowMessenger.Send(this, new CloseWindowMessage(new WeakReference(this)));
-    }
+    public void CloseWindow() => WindowMessenger.SendCloseWinMessage(this);
 }
