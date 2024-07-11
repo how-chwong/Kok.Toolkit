@@ -9,9 +9,9 @@ Kok.Toolkit是个人在工作过程中不断积累的一个.Net平台下的通�
 
 | 项目                                                         | 说明                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [Kok.Toolkit.Core](https://github.com/how-chwong/Kok.Toolkit/tree/feat-init-core-code/src/Kok.Toolkit.Core) | 提供通用工具类，如二进制序列化/反序列化器、CRC校验码计算器、日志记录器灯；也提供了若干常用的类型扩展方法 |
-| [Kok.Toolkit.Wpf](https://github.com/how-chwong/Kok.Toolkit/tree/feat-init-core-code/src/Kok.Toolkit.Wpf) | 基于[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet/tree/main/src/CommunityToolkit.Mvvm)实现了WPF下的MVVM，提供了视图模型基类、对话框服务、导航服务，并封装了通用WPFHost,也提供了若干常用的转换器等 |
-| [Kok.Test.WpfDemo](https://github.com/how-chwong/Kok.Toolkit/tree/feat-init-core-code/test/Kok.Test.WpfDemo) | 使用[Kok.Toolkit.Wpf](https://github.com/how-chwong/Kok.Toolkit/tree/feat-init-core-code/src/Kok.Toolkit.Wpf)进行开发的示例程序 |
+| [Kok.Toolkit.Core](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Core) | 提供通用工具类，如二进制序列化/反序列化器、CRC校验码计算器、日志记录器灯；也提供了若干常用的类型扩展方法 |
+| [Kok.Toolkit.Wpf](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Wpf) | 基于[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet/tree/main/src/CommunityToolkit.Mvvm)实现了WPF下的MVVM，提供了视图模型基类、对话框服务、导航服务，并封装了通用WPFHost,也提供了若干常用的转换器等 |
+| [Kok.Toolkit.Avalonia](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Avalonia) | 基于[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet/tree/main/src/CommunityToolkit.Mvvm)实现用于Avalonia框架的视图模型基类、对话框、MessageBox，并封装了通用AvaloniaHost |
 
 ## Kok.ToolKit.Core
 

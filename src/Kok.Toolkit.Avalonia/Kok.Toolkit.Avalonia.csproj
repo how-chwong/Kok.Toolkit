@@ -4,7 +4,19 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Authors>How Chwong</Authors>
+    <Description>基于CommunityToolkit.Mvvm实现了Avalonia下的MVVM，提供了视图模型基类、对话框服务、导航服务、MessageBox，并封装了通用AvaloniaHost</Description>
+    <PackageProjectUrl>https://github.com/how-chwong/Kok.Toolkit</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/how-chwong/Kok.Toolkit.git</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.0.11" />
