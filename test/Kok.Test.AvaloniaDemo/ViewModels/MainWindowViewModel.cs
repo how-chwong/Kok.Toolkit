@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Kok.Toolkit.Avalonia.Dialogs;
 using Kok.Toolkit.Avalonia.Mvvm;
 using Kok.Toolkit.Avalonia.Navigation;
+using Microsoft.Extensions.Configuration;
 
 namespace Kok.Test.AvaloniaDemo.ViewModels
 {
@@ -10,12 +11,18 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
     {
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialogs;
+        private readonly IConfiguration _configuration;
 
-        public MainWindowViewModel(INavigationService navigation, IDialogService dialogs)
+        public MainWindowViewModel(IConfiguration configuration, INavigationService navigation, IDialogService dialogs)
         {
+            _configuration = configuration;
             _navigation = navigation;
             _dialogs = dialogs;
+            WinTitle = App.GetStringArg(_configuration, CommandArgType.ConfigFile);
         }
+
+        [ObservableProperty]
+        private string _winTitle;
 
         [ObservableProperty]
         private string greeting = "Welcome to Avalonia!";

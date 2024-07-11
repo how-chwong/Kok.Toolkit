@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Kok.Toolkit.Core.Log;
+using Kok.Toolkit.Avalonia.Dialogs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -78,17 +79,21 @@ public class AvaloniaHost : IDisposable
     /// 运行指定的窗体
     /// </summary>
     /// <typeparam name="T">窗体类型</typeparam>
-    /// <param name="args">启动参数</param>
-    public bool Run<T>(string[] args) where T : Window
+    /// <param name="desktop">桌面程序</param>
+    public void Run<T>(IClassicDesktopStyleApplicationLifetime desktop) where T : Window
     {
         var win = Ioc.Default.GetService<T>();
-        if (win != null)
+        if (win == null)
         {
-            win.Show();
-            return true;
+            MessageBox.ShowAsync("初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{args}");
+            return;
         }
-        Tracker.WriteFatal($"初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{args}");
-        return false;
+        desktop.MainWindow = win;
+        desktop.MainWindow.Closing += async (_, _) =>
+        {
+            if (_host == null) return;
+            using (_host) await _host.StopAsync();
+        };
     }
 
     /// <summary>

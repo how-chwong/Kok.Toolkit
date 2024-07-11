@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Kok.Test.AvaloniaDemo": {
+      "commandName": "Project",
+      "commandLineArgs": "--c train.cfg"
+    }
+  }
+}
