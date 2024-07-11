@@ -17,7 +17,7 @@ public static class MessageBox
     /// <param name="message"></param>
     /// <param name="title"></param>
     public static async void ShowAsync(string message, string title = "提示")
-        => await GetMessageBox(title, message, ButtonEnum.Ok).ShowAsync();
+        => await GetMessageBox(message, title, ButtonEnum.Ok).ShowAsync();
 
     /// <summary>
     /// 显示一条询问信息
