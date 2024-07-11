@@ -28,9 +28,12 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
         private string greeting = "Welcome to Avalonia!";
 
         [RelayCommand]
-        private void OpenFirstWin()
+        private async void OpenFirstWin()
         {
-            _dialogs.Show<Views.FirstView>();
+            if (await MessageBox.AskAsync("是否要显示弹窗?"))
+            {
+                _dialogs.Show<Views.FirstView>();
+            }
         }
     }
 }

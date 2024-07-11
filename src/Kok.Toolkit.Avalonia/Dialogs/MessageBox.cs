@@ -1,4 +1,7 @@
-﻿using MsBox.Avalonia;
+﻿using Avalonia.Controls;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Base;
+using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 
 namespace Kok.Toolkit.Avalonia.Dialogs;
@@ -13,8 +16,8 @@ public static class MessageBox
     /// </summary>
     /// <param name="message"></param>
     /// <param name="title"></param>
-    public static async void ShowAsync(string message, string title = "信息")
-        => await MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok).ShowAsync();
+    public static async void ShowAsync(string message, string title = "提示")
+        => await GetMessageBox(title, message, ButtonEnum.Ok).ShowAsync();
 
     /// <summary>
     /// 显示一条询问信息
@@ -24,7 +27,26 @@ public static class MessageBox
     /// <returns></returns>
     public static async Task<bool> AskAsync(string message, string title = "询问")
     {
-        var result = await MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.YesNo).ShowAsync();
+        var result = await GetMessageBox(message, title, ButtonEnum.YesNo).ShowAsync();
         return result is ButtonResult.Yes;
+    }
+
+    private static IMsBox<ButtonResult> GetMessageBox(string message, string title, ButtonEnum button)
+    {
+        return MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams()
+        {
+            ButtonDefinitions = button,
+            CanResize = false,
+            ContentHeader = title,
+            ContentMessage = message,
+            ContentTitle = string.Empty,
+            ShowInCenter = true,
+            Topmost = true,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            SystemDecorations = SystemDecorations.BorderOnly,
+            EnterDefaultButton = ClickEnum.Yes,
+            EscDefaultButton = ClickEnum.No
+        });
     }
 }
