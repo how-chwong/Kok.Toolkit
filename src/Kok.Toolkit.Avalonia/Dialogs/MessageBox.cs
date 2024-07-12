@@ -1,7 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using Kok.Toolkit.Avalonia.Hosting;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;
-using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 
 namespace Kok.Toolkit.Avalonia.Dialogs;
@@ -17,7 +16,10 @@ public static class MessageBox
     /// <param name="message"></param>
     /// <param name="title"></param>
     public static async void ShowAsync(string message, string title = "提示")
-        => await GetMessageBox(message, title, ButtonEnum.Ok).ShowAsync();
+    {
+        var win = AvaloniaHost.CurrentWindow ?? throw new InvalidOperationException("不支持在未激活的窗体弹窗");
+        await GetMessageBox(message, title, ButtonEnum.Ok).ShowAsPopupAsync(win);
+    }
 
     /// <summary>
     /// 显示一条询问信息
@@ -27,26 +29,12 @@ public static class MessageBox
     /// <returns></returns>
     public static async Task<bool> AskAsync(string message, string title = "询问")
     {
-        var result = await GetMessageBox(message, title, ButtonEnum.YesNo).ShowAsync();
+        var win = AvaloniaHost.CurrentWindow ?? throw new InvalidOperationException("不支持在未激活的窗体弹窗");
+
+        var result = await GetMessageBox(message, title, ButtonEnum.YesNo).ShowAsPopupAsync(win);
         return result is ButtonResult.Yes;
     }
 
     private static IMsBox<ButtonResult> GetMessageBox(string message, string title, ButtonEnum button)
-    {
-        return MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams()
-        {
-            ButtonDefinitions = button,
-            CanResize = false,
-            ContentHeader = title,
-            ContentMessage = message,
-            ContentTitle = string.Empty,
-            ShowInCenter = true,
-            Topmost = true,
-            SizeToContent = SizeToContent.WidthAndHeight,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            SystemDecorations = SystemDecorations.BorderOnly,
-            EnterDefaultButton = ClickEnum.Yes,
-            EscDefaultButton = ClickEnum.No
-        });
-    }
+        => MessageBoxManager.GetMessageBoxStandard(title, message, button);
 }

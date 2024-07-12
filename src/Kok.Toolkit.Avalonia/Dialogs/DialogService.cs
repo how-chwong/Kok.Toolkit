@@ -1,7 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Kok.Toolkit.Avalonia.Hosting;
 using System.Collections.Concurrent;
 
 namespace Kok.Toolkit.Avalonia.Dialogs;
@@ -65,10 +64,8 @@ public sealed class DialogService : IDialogService
     {
         var win = Ioc.Default.GetService<TView>() ?? throw new InvalidOperationException($"尝试打开{typeof(TView).Name}窗体失败，未在容器中发现该类型!"); ;
 
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } desktopLifetime)
-            throw new InvalidOperationException("不支持无主窗体的桌面程序进行弹窗");
-
-        var owner = desktopLifetime.MainWindow;
+        var owner = AvaloniaHost.MainWindow;
+        if (owner == null) throw new InvalidOperationException("不支持在没有主窗体的应用中弹窗");
         if (win is IWithParameterWindow temp)
             await temp.InitializeAsync(parameter);
         var result = await win.ShowDialog<bool?>(owner);

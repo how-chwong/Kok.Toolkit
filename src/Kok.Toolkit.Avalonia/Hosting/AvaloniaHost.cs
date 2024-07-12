@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Kok.Toolkit.Avalonia.Dialogs;
@@ -112,4 +113,27 @@ public class AvaloniaHost : IDisposable
     /// 释放资源
     /// </summary>
     public void Dispose() => _host?.Dispose();
+
+    /// <summary>
+    /// 当前宿主的桌面应用
+    /// </summary>
+    public static IClassicDesktopStyleApplicationLifetime Desktop
+    {
+        get
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)!;
+            throw new InvalidOperationException("仅支持桌面样式的应用获取Desktop");
+        }
+    }
+
+    /// <summary>
+    /// 当前应用的激活窗体
+    /// </summary>
+    public static Window? CurrentWindow => Desktop.Windows.FirstOrDefault(d => d.IsActive);
+
+    /// <summary>
+    /// 当前应用的主窗体
+    /// </summary>
+    public static Window? MainWindow => Desktop.MainWindow;
 }

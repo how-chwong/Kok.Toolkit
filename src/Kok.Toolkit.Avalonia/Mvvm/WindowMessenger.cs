@@ -1,12 +1,25 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace Kok.Toolkit.Avalonia.Mvvm;
 
+/// <summary>
+/// 窗体消息基类
+/// </summary>
+/// <param name="Sender"></param>
 public record WindowMessage(WeakReference Sender);
 
+/// <summary>
+/// 关闭窗体的消息
+/// </summary>
+/// <param name="Sender"></param>
 public record CloseWindowMessage(WeakReference Sender) : WindowMessage(Sender)
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="sender"></param>
     public CloseWindowMessage(object sender) : this(new WeakReference(sender))
     {
     }
@@ -23,7 +36,10 @@ public static class WindowMessenger
     /// <param name="recipient"></param>
     public static void ResponseCloseWinMessage<TSender>(Window recipient) where TSender : class
     {
-        Register<TSender, CloseWindowMessage>(recipient, (_) => recipient.Close(true));
+        async void OnGotMessage(CloseWindowMessage _)
+            => await Dispatcher.UIThread.InvokeAsync(recipient.Close);
+
+        Register<TSender, CloseWindowMessage>(recipient, OnGotMessage);
         recipient.Closed += (_, _) => UnRegister<TSender, CloseWindowMessage>(recipient);
     }
 
