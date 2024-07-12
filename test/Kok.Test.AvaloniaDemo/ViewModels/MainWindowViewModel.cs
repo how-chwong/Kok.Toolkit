@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kok.Toolkit.Avalonia.Dialogs;
 using Kok.Toolkit.Avalonia.Mvvm;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Kok.Test.AvaloniaDemo.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModel
+    public partial class MainWindowViewModel : ViewModel, IViewModelNotifiable
     {
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialogs;
@@ -35,5 +36,11 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
                 _dialogs.Show<Views.FirstView>();
             }
         }
+
+        [RelayCommand]
+        private void Save() =>
+            ((IViewModelNotifiable)this).SendNotification("提示", "内容1111", NotificationType.Information);
+
+        public WindowNotificationManager? NotificationManager { get; set; }
     }
 }

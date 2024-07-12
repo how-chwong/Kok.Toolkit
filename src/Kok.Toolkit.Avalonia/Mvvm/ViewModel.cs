@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Kok.Toolkit.Avalonia.Mvvm;
 
@@ -56,4 +58,36 @@ public abstract class MessengerViewModel<T> : MessengerViewModel where T : class
     /// <param name="receiver">消息来源</param>
     /// <param name="message">收到的消息实例</param>
     protected abstract void OnGotMessage(object receiver, T message);
+}
+
+/// <summary>
+/// 可发送通知的视图模型接口
+/// </summary>
+public interface IViewModelNotifiable
+{
+    /// <summary>
+    /// 通知管理器
+    /// </summary>
+    WindowNotificationManager? NotificationManager { get; protected set; }
+
+    /// <summary>
+    /// 设置通知的显示级别
+    /// </summary>
+    /// <param name="window"></param>
+    /// <param name="maxItems"></param>
+    /// <param name="position"></param>
+    void SetNotifyTopLevel(Window window, int maxItems = 10, NotificationPosition position = NotificationPosition.TopRight)
+    {
+        NotificationManager = new WindowNotificationManager(window) { MaxItems = maxItems, Position = position };
+    }
+
+    /// <summary>
+    /// 发送一条通知
+    /// </summary>
+    /// <param name="title">标题</param>
+    /// <param name="message">通知内容</param>
+    /// <param name="type">类型</param>
+    /// <param name="seconds">显示时间，单位秒</param>
+    void SendNotification(string title, string message, NotificationType type, int seconds = 5)
+        => NotificationManager?.Show(new Notification(title, message, type, TimeSpan.FromSeconds(seconds)));
 }

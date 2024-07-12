@@ -13,14 +13,18 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
-	<Grid RowDefinitions="20,Auto">
+	<Grid RowDefinitions="20,50,Auto">
 		<Menu>
 			<MenuItem Header="视图">
 				<MenuItem Command="{Binding OpenFirstWinCommand}" Header="窗口1" />
 			</MenuItem>
 		</Menu>
-		<TextBlock
+		<Button
             Grid.Row="1"
+            Command="{Binding SaveCommand}"
+            Content="发个通知" />
+		<TextBlock
+            Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Text="{Binding Greeting}" />

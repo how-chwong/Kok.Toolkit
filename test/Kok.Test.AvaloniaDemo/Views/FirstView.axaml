@@ -16,10 +16,12 @@
 	</Window.DataContext>
 	<Grid RowDefinitions="*,50">
 		<TextBlock Text="First View" />
-		<Button
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            Command="{ReflectionBinding CloseWindowCommand}"
-            Content="关闭" />
+		<StackPanel Grid.Row="1">
+			<Button Command="{ReflectionBinding SendCommand}" Content="发送通知" />
+			<Button
+                HorizontalAlignment="Center"
+                Command="{ReflectionBinding CloseWindowCommand}"
+                Content="关闭" />
+		</StackPanel>
 	</Grid>
 </Window>

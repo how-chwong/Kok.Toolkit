@@ -1,15 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kok.Toolkit.Avalonia.Mvvm;
-using System;
 
 namespace Kok.Test.AvaloniaDemo.ViewModels;
 
-public partial class FirstViewModel : MessengerViewModel
+public partial class FirstViewModel : MessengerViewModel, IViewModelNotifiable
 {
     [ObservableProperty]
     private string _title = "First View";
 
     [RelayCommand]
-    public void CloseWindow() => WindowMessenger.SendCloseWinMessage(this);
+    private void CloseWindow() => WindowMessenger.SendCloseWinMessage(this);
+
+    [RelayCommand]
+    private void Send()
+        => (this as IViewModelNotifiable).SendNotification("错误", "发生了一个错误", NotificationType.Error);
+
+    public WindowNotificationManager? NotificationManager { get; set; }
 }
