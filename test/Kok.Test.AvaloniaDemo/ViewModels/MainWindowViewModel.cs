@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Kok.Test.AvaloniaDemo.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModel, IViewModelNotifiable
+    public partial class MainWindowViewModel : ViewModel
     {
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialogs;
@@ -39,8 +39,6 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
 
         [RelayCommand]
         private void Save() =>
-            ((IViewModelNotifiable)this).SendNotification("提示", "内容1111", NotificationType.Information);
-
-        public WindowNotificationManager? NotificationManager { get; set; }
+            WindowMessenger.Send(this, new NotificationMessage(this, "内容1111", false));
     }
 }

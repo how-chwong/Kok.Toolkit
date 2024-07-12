@@ -5,7 +5,7 @@ using Kok.Toolkit.Avalonia.Mvvm;
 
 namespace Kok.Test.AvaloniaDemo.ViewModels;
 
-public partial class FirstViewModel : MessengerViewModel, IViewModelNotifiable
+public partial class FirstViewModel : MessengerViewModel
 {
     [ObservableProperty]
     private string _title = "First View";
@@ -15,7 +15,5 @@ public partial class FirstViewModel : MessengerViewModel, IViewModelNotifiable
 
     [RelayCommand]
     private void Send()
-        => (this as IViewModelNotifiable).SendNotification("错误", "发生了一个错误", NotificationType.Error);
-
-    public WindowNotificationManager? NotificationManager { get; set; }
+        => WindowMessenger.Send(this, new NotificationMessage(this, "发生了一个错误", true));
 }
