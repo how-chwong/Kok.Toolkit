@@ -14,10 +14,11 @@
 	<Window.DataContext>
 		<viewModels:FirstViewModel />
 	</Window.DataContext>
-	<Grid RowDefinitions="*,50">
+	<Grid RowDefinitions="*,150">
 		<TextBlock Text="First View" />
 		<StackPanel Grid.Row="1">
 			<Button Command="{ReflectionBinding SendCommand}" Content="发送通知" />
+			<Button Command="{ReflectionBinding VmSendCommand}" Content="VM发送通知" />
 			<Button
                 HorizontalAlignment="Center"
                 Command="{ReflectionBinding CloseWindowCommand}"

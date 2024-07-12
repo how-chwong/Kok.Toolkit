@@ -16,4 +16,8 @@ public partial class FirstViewModel : MessengerViewModel
     [RelayCommand]
     private void Send()
         => WindowMessenger.Send(this, new NotificationMessage(this, "发生了一个错误", true));
+
+    [RelayCommand]
+    private void VmSend()
+        => SendMessage(new NotificationMessage(this, "这是VM发送的消息", false));
 }
