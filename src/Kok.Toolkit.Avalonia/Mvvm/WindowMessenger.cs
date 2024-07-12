@@ -51,7 +51,7 @@ public static class WindowMessenger
     {
         async void OnGotMessage(NotificationMessage message)
             => await Dispatcher.UIThread.InvokeAsync(() => onGotMessage(message));
-        Register<TSender, NotificationMessage>(recipient, onGotMessage);
+        Register<TSender, NotificationMessage>(recipient, OnGotMessage);
         recipient.Closed += (_, _) => UnRegister<TSender, NotificationMessage>(recipient);
     }
 
