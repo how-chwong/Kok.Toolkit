@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
+using Kok.Toolkit.Avalonia.Dialogs;
 
 namespace Kok.Toolkit.Avalonia.Mvvm;
 
@@ -36,6 +37,24 @@ public static class WindowMessenger
     {
         async void OnGotMessage(CloseWindowMessage _)
             => await Dispatcher.UIThread.InvokeAsync(recipient.Close);
+
+        Register<TSender, CloseWindowMessage>(recipient, OnGotMessage);
+        recipient.Closed += (_, _) => UnRegister<TSender, CloseWindowMessage>(recipient);
+    }
+
+    /// <summary>
+    /// 响应窗体关闭消息
+    /// </summary>
+    /// <param name="recipient">消息接收者</param>
+    /// <param name="tips">关闭窗体前的确认提示</param>
+    public static void ResponseCloseWinMessageWithConfirm<TSender>(Window recipient, string tips = "确定要关闭窗体吗?") where TSender : class
+    {
+        void OnGotMessage(CloseWindowMessage _)
+            => Dispatcher.UIThread.Invoke(async () =>
+            {
+                if (await MessageBox.AskAsync(tips, string.Empty))
+                    recipient.Close();
+            });
 
         Register<TSender, CloseWindowMessage>(recipient, OnGotMessage);
         recipient.Closed += (_, _) => UnRegister<TSender, CloseWindowMessage>(recipient);

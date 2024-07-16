@@ -16,7 +16,7 @@ public partial class FirstView : Window
     public FirstView()
     {
         InitializeComponent();
-        WindowMessenger.ResponseCloseWinMessage<FirstViewModel>(this);
+        WindowMessenger.ResponseCloseWinMessageWithConfirm<FirstViewModel>(this);
         WindowMessenger.ResponseNotificationMessage<FirstViewModel>(this, OnGotNotification);
     }
 
