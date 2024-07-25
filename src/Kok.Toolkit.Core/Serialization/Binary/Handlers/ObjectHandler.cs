@@ -34,12 +34,9 @@ public class ObjectHandler : BinaryBaseHandler
         var propertyInfos = GetSortedProperties(type);
         foreach (var property in propertyInfos)
         {
-            if (!property.CanWrite)
-                continue;
-            if (property.SetMethod != null && property.SetMethod.IsPrivate)
-                continue;
-            if (property.HasAttribute<BinaryIgnoreAttribute>())
-                continue;
+            if (!property.CanWrite) continue;
+            if (property.SetMethod != null && property.SetMethod.IsPrivate) continue;
+            if (property.HasAttribute<BinaryIgnoreAttribute>()) continue;
             if (property.HasAttribute<CrcStartByteAttribute>())
                 _crcStartByteLocations.Push((int)Serializer.StreamPosition);
 
@@ -54,6 +51,10 @@ public class ObjectHandler : BinaryBaseHandler
             else if (property.PropertyType.IsNumericType() && HasCrc8Attribute(property, out var crc8))
             {
                 Serializer.Write(crc8);
+            }
+            else if (property.PropertyType.IsNumericType() && HasFcsAttribute(value, type, property, out var fcs))
+            {
+                Serializer.Write(fcs, property.PropertyType);
             }
             else
             {
@@ -148,6 +149,22 @@ public class ObjectHandler : BinaryBaseHandler
             return new PresetSize(PresetSizeType.SubItemCount, length);
         }
         return new PresetSize(PresetSizeType.None, -1);
+    }
+
+    private bool HasFcsAttribute(object? obj, Type type, MemberInfo member, out object? value)
+    {
+        value = null;
+        var atr = member.GetCustomAttribute<FcsAttribute>();
+        if (atr == null || string.IsNullOrWhiteSpace(atr.Algorithm)) return false;
+        var method = type.GetMethod(atr.Algorithm);
+        if (method == null || !method.IsPublic) throw new Exception($"类型{type.FullName}内的属性{member.Name}指定的FCS生成方法不存在或不可访问");
+        var paramsInfo = method.GetParameters();
+        if (paramsInfo.Length == 0 || paramsInfo.Length > 1 || paramsInfo[0].ParameterType != typeof(byte[]))
+            throw new Exception($"类型{type.FullName}内的属性{member.Name}指定的FCS生成方法的参数只能为{typeof(byte[]).Name}");
+
+        var data = Serializer.GetBytes();
+        value = method.Invoke(obj, new object[] { data });
+        return true;
     }
 
     private bool HasCrc8Attribute(MemberInfo member, out byte crc)

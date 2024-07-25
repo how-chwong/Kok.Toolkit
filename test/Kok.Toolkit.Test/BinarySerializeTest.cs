@@ -58,6 +58,15 @@ public class BinarySerializeTest
         Assert.Equal(data.Data.StateList[1], data1.Data.StateList[1]);
         Assert.True(data1.Crc > 0);
     }
+
+    [Fact]
+    public void FcsTest()
+    {
+        var data = new TestData { Header = 1, Status = 2 };
+
+        Assert.True(BinarySerializer.Serialize(data, out var temp, out _));
+        Assert.True(temp[2] == 3);
+    }
 }
 
 public class TestMessage<T> where T : class, new()
@@ -80,4 +89,21 @@ public class CmdData
 
     [CollectionItemCount(nameof(Count))]
     public List<byte>? StateList { get; set; }
+}
+
+public class TestData
+{
+    public byte Header { get; set; }
+
+    public byte Status { get; set; }
+
+    [Fcs(nameof(GetFcs))]
+    public byte Fcs { get; set; }
+
+    public byte GetFcs(byte[] bytes)
+    {
+        var sum = 0;
+        Array.ForEach(bytes.ToArray(), b => sum += b);
+        return (byte)sum;
+    }
 }
