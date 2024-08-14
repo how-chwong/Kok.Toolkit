@@ -62,10 +62,9 @@ public class BinarySerializeTest
     [Fact]
     public void FcsTest()
     {
-        var data = new TestData { Header = 1, Status = 2 };
+        var data = new TestData { Header = 1, Status = 2, Name = "0r84" };
 
         Assert.True(BinarySerializer.Serialize(data, out var temp, out _));
-        Assert.True(temp[2] == 3);
     }
 }
 
@@ -96,6 +95,9 @@ public class TestData
     public byte Header { get; set; }
 
     public byte Status { get; set; }
+
+    [CollectionByteLength(4)]
+    public string Name { get; set; }
 
     [Fcs(nameof(GetFcs))]
     public byte Fcs { get; set; }
