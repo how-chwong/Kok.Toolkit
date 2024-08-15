@@ -48,7 +48,7 @@ public static class Crc32
 
     #endregion CRC32 余式表
 
-    private static uint Compute(byte[] data, int start, int length, uint[] table, uint init, bool refIn,
+    private static uint Compute(ReadOnlySpan<byte> data, int start, int length, ReadOnlySpan<uint> table, uint init, bool refIn,
         bool refOut, uint xorOut)
     {
         if (data == null)
@@ -69,7 +69,8 @@ public static class Crc32
         for (var j = start; j <= end; j++)
         {
             var dataByte = refIn ? data[j].Reverse() : data[j];
-            crc = table[((crc >> 24) ^ dataByte) & 0xff] ^ (crc << 8);
+            var index = (int)(((crc >> 24) ^ dataByte) & 0xff);
+            crc = table[index] ^ (crc << 8);
         }
         crc = refOut ? crc.ReverseBit() : crc;
         return crc ^ xorOut;
@@ -87,7 +88,7 @@ public static class Crc32
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static uint Compute(byte[] data, int start, int length)
+        public static uint Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc32.Compute(data, start, length, s_table0X04C11db7, 0xFFFFFFFF, true, true, 0xFFFFFFFF);
 
         /// <summary>
@@ -95,7 +96,7 @@ public static class Crc32
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static uint Compute(byte[] data)
+        public static uint Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -111,7 +112,7 @@ public static class Crc32
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static uint Compute(byte[] data, int start, int length)
+        public static uint Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc32.Compute(data, start, length, s_table0X04C11db7, 0x00000000, false, false, 0x00000000);
 
         /// <summary>
@@ -119,7 +120,7 @@ public static class Crc32
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static uint Compute(byte[] data)
+        public static uint Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -135,7 +136,7 @@ public static class Crc32
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static uint Compute(byte[] data, int start, int length)
+        public static uint Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc32.Compute(data, start, length, s_table0X04C11db7, 0xFFFFFFFF, false, false, 0x00000000);
 
         /// <summary>
@@ -143,7 +144,7 @@ public static class Crc32
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static uint Compute(byte[] data)
+        public static uint Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 }

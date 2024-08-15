@@ -83,7 +83,7 @@ public static class Crc8
 
     #endregion CRC8余式表
 
-    private static byte Compute(byte[] data, int start, int length, byte shift, byte[] table, byte init, bool refIn,
+    private static byte Compute(ReadOnlySpan<byte> data, int start, int length, byte shift, ReadOnlySpan<byte> table, byte init, bool refIn,
         bool refOut, byte xorOut)
     {
         var crc = (byte)(init << shift);
@@ -109,7 +109,7 @@ public static class Crc8
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data, int start, int length)
+        public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc8.Compute(data, start, length, 0, s_table0X07, 0, false, false, 0x00);
 
         /// <summary>
@@ -117,7 +117,7 @@ public static class Crc8
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data)
+        public static byte Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -133,7 +133,7 @@ public static class Crc8
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data, int start, int length)
+        public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc8.Compute(data, start, length, 0, s_table0X07, 0x00, false, false, 0x55);
 
         /// <summary>
@@ -141,7 +141,7 @@ public static class Crc8
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data)
+        public static byte Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -157,7 +157,7 @@ public static class Crc8
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data, int start, int length)
+        public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc8.Compute(data, start, length, 0, s_table0X07, 0xFF, true, true, 0x00);
 
         /// <summary>
@@ -165,7 +165,7 @@ public static class Crc8
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data)
+        public static byte Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -181,7 +181,7 @@ public static class Crc8
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data, int start, int length)
+        public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc8.Compute(data, start, length, 0, s_table0X31, 0x00, true, true, 0x00);
 
         /// <summary>
@@ -189,7 +189,7 @@ public static class Crc8
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static byte Compute(byte[] data)
+        public static byte Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 }

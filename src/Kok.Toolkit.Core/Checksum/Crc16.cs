@@ -119,7 +119,7 @@ public static class Crc16
 
     #endregion CRC余式表
 
-    private static ushort Compute(byte[] data, int start, int length, ushort[] table, ushort init,
+    private static ushort Compute(ReadOnlySpan<byte> data, int start, int length, ReadOnlySpan<ushort> table, ushort init,
         bool refIn, bool refOut, ushort xorOut)
     {
         if (data == null)
@@ -157,7 +157,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X8005, 0x0000, true, true, 0x0000);
 
         /// <summary>
@@ -165,7 +165,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -181,7 +181,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X8005, 0x0000, true, true, 0xFFFF);
 
         /// <summary>
@@ -205,7 +205,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X8005, 0xFFFF, true, true, 0xFFFF);
 
         /// <summary>
@@ -213,7 +213,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -229,7 +229,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X8005, 0xFFFF, true, true, 0x0000);
 
         /// <summary>
@@ -237,7 +237,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -253,7 +253,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X1021, 0x0000, true, true, 0x0000);
 
         /// <summary>
@@ -261,7 +261,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -277,7 +277,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X1021, 0xFFFF, false, false, 0x0000);
 
         /// <summary>
@@ -285,7 +285,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -301,7 +301,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X1021, 0xFFFF, false, false, 0xFFFF);
 
         /// <summary>
@@ -309,7 +309,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -325,7 +325,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X1021, 0x0000, false, false, 0x0000);
 
         /// <summary>
@@ -333,7 +333,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 
@@ -349,7 +349,7 @@ public static class Crc16
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data, int start, int length)
+        public static ushort Compute(ReadOnlySpan<byte> data, int start, int length)
             => Crc16.Compute(data, start, length, s_table0X3d65, 0x0000, true, true, 0xFFFF);
 
         /// <summary>
@@ -357,7 +357,7 @@ public static class Crc16
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static ushort Compute(byte[] data)
+        public static ushort Compute(ReadOnlySpan<byte> data)
             => Compute(data, 0, data.Length);
     }
 }
