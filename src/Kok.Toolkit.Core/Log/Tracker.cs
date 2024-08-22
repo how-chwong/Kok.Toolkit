@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Reflection.Metadata;
 
 namespace Kok.Toolkit.Core.Log;
 
@@ -64,6 +65,16 @@ public static class Tracker
         {
             s_loggers.TryAdd(typeof(T), logger);
         }
+    }
+
+    /// <summary>
+    /// 移除日志处理器
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="logger"></param>
+    public static void RemoveLogger<T>(T logger) where T : Logger
+    {
+        if (s_loggers.ContainsKey(typeof(T))) s_loggers.Remove(typeof(T), out _);
     }
 
     /// <summary>
