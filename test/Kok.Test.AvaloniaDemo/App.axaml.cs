@@ -29,18 +29,14 @@ namespace Kok.Test.AvaloniaDemo
 
         private AvaloniaHost? _host;
 
-        public override async void OnFrameworkInitializationCompleted()
+        public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 // Line below is needed to remove Avalonia data validation.
                 // Without this line you will get duplicate validations from both Avalonia and CT
                 BindingPlugins.DataValidators.RemoveAt(0);
-                if (_host != null)
-                {
-                    await _host.StartAsync();
-                    _host?.Run<MainWindow>(desktop);
-                }
+                _host?.Run<MainWindow>(desktop);
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -76,7 +72,6 @@ namespace Kok.Test.AvaloniaDemo
 
     public enum CommandArgType
     {
-        
         ConfigFile,
 
         IOConfig,

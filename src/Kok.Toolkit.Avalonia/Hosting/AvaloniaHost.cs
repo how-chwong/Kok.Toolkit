@@ -69,7 +69,7 @@ public class AvaloniaHost : IDisposable
     /// 启动宿主
     /// </summary>
     /// <returns></returns>
-    public async Task StartAsync()
+    private async Task StartAsync()
     {
         _host = _builder.Build();
         Ioc.Default.ConfigureServices(_host.Services);
@@ -81,14 +81,16 @@ public class AvaloniaHost : IDisposable
     /// </summary>
     /// <typeparam name="T">窗体类型</typeparam>
     /// <param name="desktop">桌面程序</param>
-    public void Run<T>(IClassicDesktopStyleApplicationLifetime desktop) where T : Window
+    public async Task Run<T>(IClassicDesktopStyleApplicationLifetime desktop) where T : Window
     {
+        await StartAsync();
         var win = Ioc.Default.GetService<T>();
         if (win == null)
         {
-            MessageBox.ShowAsync("初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{args}");
+            MessageBox.ShowAsync($"初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{desktop.Args}");
             return;
         }
+        desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
         desktop.MainWindow = win;
         desktop.MainWindow.Closing += async (_, _) =>
         {
@@ -101,7 +103,7 @@ public class AvaloniaHost : IDisposable
     /// 停止宿主
     /// </summary>
     /// <returns></returns>
-    public async Task StopAsync()
+    private async Task StopAsync()
     {
         if (_host != null)
         {
