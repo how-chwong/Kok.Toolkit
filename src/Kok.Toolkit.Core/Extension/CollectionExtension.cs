@@ -14,7 +14,7 @@ public static class CollectionExtension
     /// <param name="whenNull">当集合为空时，输出的字符串内容</param>
     /// <param name="formatString"></param>
     /// <returns></returns>
-    public static string ToString<T>(this IEnumerable<T>? values, string separator = " ", string whenNull = "", string formatString = "")
+    public static string ToString<T>(this IEnumerable<T>? values, string formatString = "", string separator = " ", string whenNull = "")
     {
         if (values == null)
             return whenNull;
