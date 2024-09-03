@@ -10,7 +10,7 @@ public class AntiReTimer
     /// <summary>
     /// 定时器
     /// </summary>
-    private readonly Timer _timer;
+    private Timer? _timer;
 
     /// <summary>
     /// 定时器的执行周期，单位毫秒
@@ -127,8 +127,9 @@ public class AntiReTimer
     /// </summary>
     public void Stop()
     {
-        _timer.Change(-1, int.MaxValue);
-        _timer.Dispose();
+        _timer?.Change(-1, int.MaxValue);
+        _timer?.Dispose();
+        _timer = null;
     }
 
     /// <summary>
