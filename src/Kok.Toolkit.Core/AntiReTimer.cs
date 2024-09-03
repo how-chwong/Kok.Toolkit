@@ -114,7 +114,7 @@ public class AntiReTimer
     /// </summary>
     /// <param name="dueTime">定时器延迟启动时间，单位毫秒，默认1000</param>
     /// <param name="period">定时器执行间隔，单位毫秒，默认100</param>
-    public void SetInterval(int dueTime = 1000, int period = 1000) => _timer.Change(dueTime, period);
+    public void SetInterval(int dueTime = 1000, int period = 1000) => _timer?.Change(dueTime, period);
 
     /// <summary>
     /// 设置执行周期数

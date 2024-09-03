@@ -97,7 +97,7 @@ public class TestData
     public byte Status { get; set; }
 
     [CollectionByteLength(4)]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Fcs(nameof(GetFcs))]
     public byte Fcs { get; set; }
