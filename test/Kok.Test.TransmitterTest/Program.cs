@@ -37,7 +37,7 @@ namespace Kok.Test.TransmitterTest
 
         //处理收到的报文
         private static void OnGotTelegram(Packet arg1, object? arg2)
-            => Console.WriteLine($"收到来自{arg1.SourceAddress}:{arg1.SourcePort}的报文,{arg1.Data.ToString(" ", string.Empty, "{0:X}")}");
+            => Console.WriteLine($"收到来自{arg1.SourceAddress}:{arg1.SourcePort}的报文,{arg1.Data.ToString("{0:X}")}");
 
         //生成报文
         private static List<MyTelegram> MakeHelloText(object? arg)

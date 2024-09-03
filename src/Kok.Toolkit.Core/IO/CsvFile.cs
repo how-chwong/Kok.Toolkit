@@ -84,7 +84,7 @@ public class CsvFile : IDisposable
         if (properties.Length != str!.Length)
         {
             value = default;
-            error = $"读取到的内容与目标属性数量不符:{str.ToString(Separator.ToString())}";
+            error = $"读取到的内容与目标属性数量不符:{str.ToString("", Separator.ToString())}";
             return false;
         }
         try
