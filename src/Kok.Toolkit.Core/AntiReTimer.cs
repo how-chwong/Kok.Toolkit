@@ -36,7 +36,7 @@ public class AntiReTimer
     /// 执行周期数
     /// 0：无限循环执行；>0：仅执行指定周期数
     /// </summary>
-    private int _runTimes = 5;
+    private int _runTimes;
 
     /// <summary>
     /// 构造一个无限循环执行的定时器
@@ -93,9 +93,14 @@ public class AntiReTimer
 
         try
         {
-            var r = _isResetCounter?.Invoke();
-            _counter = _isResetCounter != null && r == true ? 0 : _counter + 1;
-            if (_runTimes != 0 && _counter >= _runTimes) return;
+            if (_isResetCounter != null)
+            {
+                var r = _isResetCounter.Invoke();
+                _counter = r ? 0 : _counter + 1;
+
+                if (_runTimes != 0 && _counter >= _runTimes) return;
+            }
+
             _action(state);
         }
         catch (Exception ex)
