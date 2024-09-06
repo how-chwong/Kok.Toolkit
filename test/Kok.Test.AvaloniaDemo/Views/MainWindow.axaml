@@ -9,6 +9,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:MainWindowViewModel"
+    FontFamily="微软雅黑"
     Icon="/Assets/avalonia-logo.ico"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
