@@ -27,7 +27,7 @@ namespace Kok.Test.AvaloniaDemo
             AvaloniaXamlLoader.Load(this);
         }
 
-        private AvaloniaHost? _host;
+        private static AvaloniaHost? _host;
 
         public override void OnFrameworkInitializationCompleted()
         {
@@ -41,8 +41,16 @@ namespace Kok.Test.AvaloniaDemo
 
             base.OnFrameworkInitializationCompleted();
         }
+        public async static void InitServices()
+        {
+           
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            _host = new AvaloniaHost(Array.Empty<string>()).ConfigureServices(AddServices);
+            await _host.StartAsync();
 
-        private void AddServices(IServiceCollection services)
+
+        }
+        private static void AddServices(IServiceCollection services)
         {
             services.AddNavigationService();
             services.AddDialogService();

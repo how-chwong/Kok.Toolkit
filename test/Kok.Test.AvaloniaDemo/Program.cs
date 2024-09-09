@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using System;
 
 namespace Kok.Test.AvaloniaDemo
@@ -14,9 +15,21 @@ namespace Kok.Test.AvaloniaDemo
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .WithInterFont()
-                .LogToTrace();
+        {
+
+            var builder = AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().LogToTrace();
+            if (Design.IsDesignMode)
+            {
+
+                App.InitServices();
+            }
+            return builder;
+
+            //public static AppBuilder BuildAvaloniaApp()
+            //    => AppBuilder.Configure<App>()
+            //        .UsePlatformDetect()
+            //        .WithInterFont()
+            //        .LogToTrace();
+        }
     }
 }

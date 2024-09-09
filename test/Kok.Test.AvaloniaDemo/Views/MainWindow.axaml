@@ -12,8 +12,9 @@
     FontFamily="微软雅黑"
     Icon="/Assets/avalonia-logo.ico"
     WindowStartupLocation="CenterScreen"
+	
     mc:Ignorable="d">
-
+	
 	<Grid RowDefinitions="20,50,Auto">
 		<Menu>
 			<MenuItem Header="视图">

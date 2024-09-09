@@ -69,7 +69,7 @@ public class AvaloniaHost : IDisposable
     /// 启动宿主
     /// </summary>
     /// <returns></returns>
-    private async Task StartAsync()
+    public async Task StartAsync()
     {
         _host = _builder.Build();
         Ioc.Default.ConfigureServices(_host.Services);
@@ -103,7 +103,7 @@ public class AvaloniaHost : IDisposable
     /// 停止宿主
     /// </summary>
     /// <returns></returns>
-    private async Task StopAsync()
+    public async Task StopAsync()
     {
         if (_host != null)
         {
