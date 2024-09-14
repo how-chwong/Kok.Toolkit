@@ -35,7 +35,10 @@ public class BinarySerializeTest
     public void NullSerializeTest()
     {
         Assert.False(BinarySerializer.Serialize<TestMessage<CmdData>?>(null, out _, out _));
-        var data = new TestMessage<CmdData>() { Data = new CmdData() { Count = 3, StateList = null } };
+        var data = new TestMessage<CmdData>() {Header = 10,Data = new CmdData() {Type = 20,Count = 0 } };
+        Assert.True(BinarySerializer.Serialize(data,out var temp,out _));
+        Assert.True(BinarySerializer.Deserialize<TestMessage<CmdData>>(temp,out var newData,out _));
+         data = new TestMessage<CmdData>() { Data = new CmdData() { Count = 3, StateList = null } };
         Assert.False(BinarySerializer.Serialize(data, out byte[] _, out _));
         data.Data.Count = 0;
         Assert.True(BinarySerializer.Serialize(data, out var bytes2, out _));

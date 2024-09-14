@@ -56,7 +56,11 @@ public class CollectionHandler : BinaryBaseHandler
         if (value == null)
         {
             if (presetSize != null && presetSize.HasPresetSize())
-                throw new Exception($"类型为{type.Name}的集合指定了预设大小，但未赋值");
+            {
+                if (presetSize.Value > 0)
+                    throw new Exception($"类型为{type.Name}的集合指定了预设大小，但未赋值");
+                return true;
+            }
 
             Serializer.WriteItemCount(0);
             return true;
