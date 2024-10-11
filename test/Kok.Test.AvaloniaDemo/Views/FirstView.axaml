@@ -15,7 +15,7 @@
 		<viewModels:FirstViewModel />
 	</Window.DataContext>
 	<Grid RowDefinitions="*,150">
-		<TextBlock Text="First View" />
+		<TextBlock x:Name="MyTextBlock" Text="First View" />
 		<StackPanel Grid.Row="1">
 			<Button Command="{ReflectionBinding SendCommand}" Content="发送通知" />
 			<Button Command="{ReflectionBinding VmSendCommand}" Content="VM发送通知" />

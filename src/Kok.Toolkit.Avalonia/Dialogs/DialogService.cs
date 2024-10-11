@@ -15,6 +15,16 @@ public sealed class DialogService : IDialogService
     ///<inheritdoc />
     public void Show<T>() where T : Window
     {
+        ShowInternal<T>(null);
+    }
+
+    public void Show<T>(object parameter) where T : Window, IWithParameterWindow
+    {
+        ShowInternal<T>(parameter);
+    }
+
+    private async void ShowInternal<T>(object? parameter) where T : Window
+    {
         if (_windows.TryGetValue(typeof(T), out var temp))
         {
             if (temp.WindowState == WindowState.Minimized)
@@ -32,6 +42,8 @@ public sealed class DialogService : IDialogService
             if (sender != null)
                 _windows.TryRemove(sender.GetType(), out _);
         };
+        if (win is IWithParameterWindow pw)
+            await pw.InitializeAsync(parameter);
         _windows.TryAdd(typeof(T), win);
         win.Show();
     }

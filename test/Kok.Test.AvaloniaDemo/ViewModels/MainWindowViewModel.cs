@@ -5,6 +5,7 @@ using Kok.Toolkit.Avalonia.Dialogs;
 using Kok.Toolkit.Avalonia.Mvvm;
 using Kok.Toolkit.Avalonia.Navigation;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Kok.Test.AvaloniaDemo.ViewModels
 {
@@ -33,7 +34,7 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
         {
             if (await MessageBox.AskAsync("是否要显示弹窗?"))
             {
-                _dialogs.Show<Views.FirstView>();
+                _dialogs.Show<Views.FirstView>(DateTime.Now);
             }
         }
 
