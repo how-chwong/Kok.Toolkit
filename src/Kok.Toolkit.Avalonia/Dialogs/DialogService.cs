@@ -10,7 +10,7 @@ namespace Kok.Toolkit.Avalonia.Dialogs;
 /// </summary>
 public sealed class DialogService : IDialogService
 {
-    private readonly ConcurrentDictionary<Type, Window> _windows = new();
+    private readonly ConcurrentDictionary<string, Window> _windows = new();
 
     ///<inheritdoc />
     public void Show<T>() where T : Window
@@ -25,7 +25,8 @@ public sealed class DialogService : IDialogService
 
     private async void ShowInternal<T>(object? parameter) where T : Window
     {
-        if (_windows.TryGetValue(typeof(T), out var temp))
+        var key = $"{typeof(T)}_{parameter}";
+        if (_windows.TryGetValue(key, out var temp))
         {
             if (temp.WindowState == WindowState.Minimized)
                 temp.WindowState = WindowState.Normal;
@@ -40,11 +41,11 @@ public sealed class DialogService : IDialogService
         win.Closed += (sender, e) =>
         {
             if (sender != null)
-                _windows.TryRemove(sender.GetType(), out _);
+                _windows.TryRemove(key, out _);
         };
         if (win is IWithParameterWindow pw)
             await pw.InitializeAsync(parameter);
-        _windows.TryAdd(typeof(T), win);
+        _windows.TryAdd(key, win);
         win.Show();
     }
 
