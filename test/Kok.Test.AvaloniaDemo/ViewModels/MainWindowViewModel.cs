@@ -24,6 +24,7 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
             _navigation = navigation;
             _dialogs = dialogs;
             WinTitle = App.GetStringArg(_configuration, CommandArgType.ConfigFile);
+            _service.OnStatusChanged = (val) => IsRunning = val;
             IsRunning = _service.IsRunning;
         }
 

@@ -1,5 +1,6 @@
 ﻿using Kok.Toolkit.Avalonia.Hosting;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace Kok.Test.AvaloniaDemo.Services;
 
@@ -10,6 +11,8 @@ public interface ITestService
     void Start();
 
     void Stop();
+
+    Action<bool> OnStatusChanged { get; set; }
 }
 
 public class TestService : ITestService
@@ -19,12 +22,16 @@ public class TestService : ITestService
     public void Start()
     {
         IsRunning = true;
+        OnStatusChanged?.Invoke(IsRunning);
     }
 
     public void Stop()
     {
         IsRunning = false;
+        OnStatusChanged?.Invoke(IsRunning);
     }
+
+    public Action<bool> OnStatusChanged { get; set; }
 }
 
 public class TestHostedService : AvaloniaHostedService
