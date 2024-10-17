@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Kok.Test.AvaloniaDemo.Services;
 using Kok.Test.AvaloniaDemo.Views;
 using Kok.Toolkit.Avalonia.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,17 +42,18 @@ namespace Kok.Test.AvaloniaDemo
 
             base.OnFrameworkInitializationCompleted();
         }
+
         public async static void InitServices()
         {
-           
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             _host = new AvaloniaHost(Array.Empty<string>()).ConfigureServices(AddServices);
             await _host.StartAsync();
-
-
         }
+
         private static void AddServices(IServiceCollection services)
         {
+            services.AddSingleton<ITestService, TestService>();
+            services.AddHostedService<TestHostedService>();
             services.AddNavigationService();
             services.AddDialogService();
             services.AddViewModels();
