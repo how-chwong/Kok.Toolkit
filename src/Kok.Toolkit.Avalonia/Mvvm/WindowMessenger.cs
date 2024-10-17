@@ -84,9 +84,18 @@ public static class WindowMessenger
         => WeakReferenceMessenger.Default.Send(message, sender.GetType().ToString());
 
     /// <summary>
+    /// 发送通知消息
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="message"></param>
+    /// <param name="isWarning"></param>
+    public static void SendNotificationMessage(object sender, string message, bool isWarning)
+        => Send(sender, new NotificationMessage(sender, message, isWarning));
+
+    /// <summary>
     /// 发送关闭窗体消息
     /// </summary>
     /// <param name="sender">消息发送者</param>
     public static void SendCloseWinMessage(object sender)
-        => WeakReferenceMessenger.Default.Send(new CloseWindowMessage(sender), sender.GetType().ToString());
+        => Send(sender, new CloseWindowMessage(sender));
 }
