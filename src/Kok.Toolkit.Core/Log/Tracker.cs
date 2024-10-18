@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Reflection.Metadata;
 
 namespace Kok.Toolkit.Core.Log;
 

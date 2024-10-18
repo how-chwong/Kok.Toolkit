@@ -46,12 +46,12 @@ public class TextFileLogConfig : ConsoleLogConfig
     /// 单文件允许的最大文件大小，单位KB
     /// 最小值为1024
     /// </summary>
-    public long MaxFileSizeInKb { get; set; } = 100;
+    public long MaxFileSizeInKb { get; set; } = 10240;
 
     /// <summary>
     /// 根目录下允许的最大文件个数
     /// </summary>
-    public int MaxFileCount { get; set; } = 10;
+    public int MaxFileCount { get; set; } = 1000;
 
     /// <summary>
     /// 日志文件名格式，默认
