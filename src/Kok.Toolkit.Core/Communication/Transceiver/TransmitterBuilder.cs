@@ -36,7 +36,7 @@ public sealed class TransmitterBuilder<T>
     /// <summary>
     /// 报文生成器
     /// </summary>
-    public Func<object?, List<T>>? GenerateAction { get; private init; }
+    public Func<object?, T?>? GenerateAction { get; private init; }
 
     /// <summary>
     /// 报文变更裁判
@@ -46,7 +46,7 @@ public sealed class TransmitterBuilder<T>
     /// <summary>
     /// 报文发送前的最后处理
     /// </summary>
-    public Action<List<T>, object[]?>? BeforeSendHandler { get; private init; }
+    public Action<T?, object[]?>? BeforeSendHandler { get; private init; }
 
     /// <summary>
     /// 发送完成后的处理行为
@@ -80,9 +80,9 @@ public sealed class TransmitterBuilder<T>
     public static TransmitterBuilder<TMessage> CreateCyclical<TMessage>(
         List<TargetEndPoint> targets,
         int interval,
-        Func<object?, List<TMessage>> generateAction,
+        Func<object?, TMessage?> generateAction,
         object? generateArgs = null,
-        Action<List<TMessage>, object[]?>? beforeSend = null,
+        Action<TMessage?, object[]?>? beforeSend = null,
         Action<IReadOnlyCollection<byte>, int, DateTime, EndPoint, object?>? afterSend = null)
     {
         if (targets.IsEmpty()) throw new ArgumentException("目标地址不能为空", nameof(targets));
@@ -117,9 +117,9 @@ public sealed class TransmitterBuilder<T>
         int cycleCount,
         List<TargetEndPoint> targets,
         int interval,
-        Func<object?, List<TMessage>> generateAction,
+        Func<object?, TMessage?> generateAction,
         object? generateArgs = null,
-        Action<List<TMessage>, object[]?>? beforeSend = null,
+        Action<TMessage?, object[]?>? beforeSend = null,
         Func<bool>? judges = null,
         Action<IReadOnlyCollection<byte>, int, DateTime, EndPoint, object?>? afterSend = null)
     {

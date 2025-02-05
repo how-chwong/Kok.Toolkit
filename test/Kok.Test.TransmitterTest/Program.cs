@@ -40,8 +40,8 @@ namespace Kok.Test.TransmitterTest
             => Console.WriteLine($"收到来自{arg1.SourceAddress}:{arg1.SourcePort}的报文,{arg1.Data.ToString("{0:X}")}");
 
         //生成报文
-        private static List<MyTelegram> MakeHelloText(object? arg)
-            => new() { new MyTelegram(1, "my name is t1") };
+        private static MyTelegram MakeHelloText(object? arg)
+            => new MyTelegram(1, "my name is t1");
     }
 
     public class MyTelegram

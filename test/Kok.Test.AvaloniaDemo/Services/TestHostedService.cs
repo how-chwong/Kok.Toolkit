@@ -12,7 +12,7 @@ public interface ITestService
 
     void Stop();
 
-    Action<bool> OnStatusChanged { get; set; }
+    Action<bool>? OnStatusChanged { get; set; }
 }
 
 public class TestService : ITestService
@@ -31,7 +31,7 @@ public class TestService : ITestService
         OnStatusChanged?.Invoke(IsRunning);
     }
 
-    public Action<bool> OnStatusChanged { get; set; }
+    public Action<bool>? OnStatusChanged { get; set; }
 }
 
 public class TestHostedService : AvaloniaHostedService
