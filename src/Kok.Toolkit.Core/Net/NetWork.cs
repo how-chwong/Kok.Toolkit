@@ -93,7 +93,7 @@ public static class Network
             return false;
         if (!IPAddress.TryParse(ip, out var address))
             return false;
-        return ip.Equals("127.0.0.1") || LocalIps.Contains(address);
+        return ip.StartsWith("127.") || LocalIps.Contains(address);
     }
 
     /// <summary>

@@ -93,4 +93,65 @@ public static class Calculator
         var angle = Math.Asin(height / bevelLength);
         return Math.Tan(angle);
     }
+
+    /// <summary>
+    /// 双字节转ushort
+    /// </summary>
+    /// <param name="highByte"></param>
+    /// <param name="lowByte"></param>
+    /// <returns></returns>
+    public static ushort ToUShort(byte highByte, byte lowByte)
+        => (ushort)((short)(highByte << 8) + lowByte);
+
+    /// <summary>
+    /// 四字节转uint
+    /// </summary>
+    /// <param name="highByte1"></param>
+    /// <param name="highByte2"></param>
+    /// <param name="lowByte1"></param>
+    /// <param name="lowByte2"></param>
+    /// <returns></returns>
+    public static uint ToUInt(byte highByte1, byte highByte2, byte lowByte1, byte lowByte2)
+        => (uint)(int)(((uint)highByte1 << 24) + (int)((uint)highByte2 << 16) + (int)((uint)lowByte1 << 8) + lowByte2);
+
+    /// <summary>
+    /// 下一个顺序值
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static byte NextSequenceValue(ref byte value) => (byte)(value % 0xff + 1);
+
+    /// <summary>
+    /// 下一个顺序值
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static byte NextSequenceValue(byte value) => (byte)(value % 0xff + 1);
+
+    /// <summary>
+    /// 下一个顺序值
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="interval">间隔数值</param>
+    /// <returns></returns>
+    public static uint NextSequenceValue(ref uint value, uint interval)
+    {
+        if (value == uint.MaxValue || uint.MaxValue - value < interval)
+            value = uint.MinValue;
+        else
+            value += interval;
+        return value;
+    }
+
+    /// <summary>
+    /// 下一个顺序值
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static ushort NextSequenceValue(ref ushort value)
+    {
+        if (value == ushort.MaxValue) value = ushort.MinValue;
+        else value += 1;
+        return value;
+    }
 }

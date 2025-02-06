@@ -81,6 +81,25 @@ public class ReactiveCommunicator
     }
 
     /// <summary>
+    /// 发送报文
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="ip"></param>
+    /// <returns></returns>
+    public (bool result, string error) Send(byte[] message, IPEndPoint ip)
+    {
+        try
+        {
+            _udpClient?.Send(message, message.Length, ip);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+
+    /// <summary>
     /// 停止报文
     /// </summary>
     public void Stop()

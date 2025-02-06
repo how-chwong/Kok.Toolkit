@@ -29,6 +29,18 @@ public class CsvFile : IDisposable
             _steam = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
     }
 
+    /// <summary>
+    /// 构造一个csv文件
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="encoding"></param>
+    public CsvFile(string file, Encoding encoding)
+    {
+        if (File.Exists(file))
+            _steam = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        Encoding = encoding;
+    }
+
     private StreamReader? _reader;
 
     /// <summary>
