@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Kok.Toolkit.Core.Extension;
+using System.Collections.Concurrent;
 
 namespace Kok.Toolkit.Core.Log;
 
@@ -177,4 +178,24 @@ public static class Tracker
     public static void WriteFatal(string message) => WriteLine(message, LogLevel.Fatal);
 
     #endregion 日志输出
+
+    /// <summary>
+    /// 输出版本信息
+    /// </summary>
+    /// <param name="prefix"></param>
+    public static void WriteVersion(string prefix)
+    {
+        if (string.IsNullOrWhiteSpace(prefix)) return;
+        var assembly = Assembly.GetCallingAssembly();
+
+        WriteInfo($"{assembly.Name()} {assembly.Version()} Build {assembly.CompileTime()}");
+        var others = assembly.GetReferencedAssemblies()
+            .Where(n => n.Name != null && n.Name.StartsWith(prefix)).ToArray();
+        if (others.Length > 0)
+            Array.ForEach(others, name =>
+            {
+                var asm = Assembly.Load(name);
+                WriteInfo($"{asm.Name()} {asm.Version()} Build {asm.CompileTime()}");
+            });
+    }
 }
