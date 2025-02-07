@@ -41,6 +41,20 @@ public class CsvFile : IDisposable
         Encoding = encoding;
     }
 
+    /// <summary>
+    /// 构造一个csv文件
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="encoding"></param>
+    /// <param name="separator"></param>
+    public CsvFile(string file, Encoding encoding, char separator)
+    {
+        if (File.Exists(file))
+            _steam = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        Encoding = encoding;
+        Separator = separator;
+    }
+
     private StreamReader? _reader;
 
     /// <summary>
