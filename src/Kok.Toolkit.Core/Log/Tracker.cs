@@ -112,6 +112,7 @@ public static class Tracker
         foreach (var log in s_loggers.Values)
         {
             if (log is FileLog fileLog) fileLog.SetSubSystemPath(path);
+            if (log is LevelLog levelLog) levelLog.SetSubSystemPath(path);
         }
     }
 

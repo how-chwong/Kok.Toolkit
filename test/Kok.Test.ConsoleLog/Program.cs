@@ -7,6 +7,7 @@ namespace Kok.Test.ConsoleLog
     {
         private static void Main()
         {
+            Tracker.SetSubSystemPath("Hello");
             Console.WriteLine("Hello, Kok!");
             Console.WriteLine("This is a test project for ConsoleLog");
             //Console.WriteLine("clear default logger");

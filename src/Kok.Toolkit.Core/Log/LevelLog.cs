@@ -29,6 +29,19 @@ public class LevelLog : Logger, IDisposable
         }
     }
 
+    /// <summary>
+    /// 设置日志子目录
+    /// </summary>
+    /// <param name="path"></param>
+    public void SetSubSystemPath(string path)
+    {
+        if (_logs.Count == 0) return;
+        foreach (var log in _logs.Values)
+        {
+            if (log is FileLog fileLog) fileLog.SetSubSystemPath(path);
+        }
+    }
+
     ///<inheritdoc />
     protected internal override void Write(LogLevel level, string message)
     {
