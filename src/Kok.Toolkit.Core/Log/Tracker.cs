@@ -93,14 +93,26 @@ public static class Tracker
     /// <summary>
     /// 修改指定类型的日志处理器的最小日志级别
     /// </summary>
-    /// <param name="type">日志处理器类型</param>
     /// <param name="level">最小日志级别</param>
     /// <returns></returns>
-    public static bool ChangeMinLogLevel(Type type, LogLevel level)
+    public static bool ChangeMinLogLevel<T>(LogLevel level) where T : Logger
     {
-        if (!s_loggers.TryGetValue(type, out var logger)) return false;
+        if (!s_loggers.TryGetValue(typeof(T), out var logger)) return false;
         logger.ChangeMiniLevel(level);
         return true;
+    }
+
+    /// <summary>
+    /// 更新日志文件的子目录
+    /// </summary>
+    /// <param name="path"></param>
+    public static void SetSubSystemPath(string path)
+    {
+        if (s_loggers.IsEmpty) return;
+        foreach (var log in s_loggers.Values)
+        {
+            if (log is FileLog fileLog) fileLog.SetSubSystemPath(path);
+        }
     }
 
     #endregion 启用日志处理器
