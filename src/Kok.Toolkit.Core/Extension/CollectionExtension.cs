@@ -12,16 +12,52 @@ public static class CollectionExtension
     /// <param name="values">待转为字符串的集合</param>
     /// <param name="separator">连接符</param>
     /// <param name="whenNull">当集合为空时，输出的字符串内容</param>
-    /// <param name="formatString"></param>
+    /// <param name="formatString">格式化</param>
+    /// <param name="formatProvider">格式化</param>
     /// <returns></returns>
-    public static string ToString<T>(this IEnumerable<T>? values, string formatString = "", string separator = " ", string whenNull = "")
+    public static string ToString<T>(
+        this IEnumerable<T>? values,
+        string formatString = "",
+        string separator = " ",
+        string whenNull = "",
+        IFormatProvider? formatProvider = null)
     {
-        if (values == null)
-            return whenNull;
-        var array = values.ToArray();
-        if (string.IsNullOrWhiteSpace(formatString))
-            return array.Any() ? string.Join(separator, array) : whenNull;
-        return array.Any() ? string.Join(separator, array.Select(v => string.Format(formatString, v))) : whenNull;
+        if (values == null) return whenNull;
+        using var enumerator = values.GetEnumerator();
+        if (!enumerator.MoveNext()) return whenNull;
+
+        var sb = new StringBuilder();
+        AppendFormattedValue(enumerator.Current, formatString, formatProvider, sb);
+        while (enumerator.MoveNext())
+        {
+            sb.Append(separator);
+            AppendFormattedValue(enumerator.Current, formatString, formatProvider, sb);
+        }
+        return sb.ToString();
+    }
+
+    private static void AppendFormattedValue<T>(
+        T value,
+        string formatString,
+        IFormatProvider? formatProvider,
+        StringBuilder sb)
+    {
+        if (string.IsNullOrEmpty(formatString))
+        {
+            sb.Append(value?.ToString() ?? "");
+        }
+        else
+        {
+            try
+            {
+                sb.AppendFormat(formatProvider, formatString, value);
+            }
+            catch (FormatException)
+            {
+                // 格式字符串无效时回退到默认 ToString
+                sb.Append(value?.ToString() ?? "");
+            }
+        }
     }
 
     /// <summary>
@@ -55,15 +91,14 @@ public static class CollectionExtension
     /// <returns></returns>
     public static int[] ToIntArray(this IEnumerable<string> values)
     {
-        var array = values as string[] ?? Array.Empty<string>();
+        var array = values as ICollection<string> ?? values.ToList();
         if (!array.Any())
             return Array.Empty<int>();
-        var data = new List<int>(array.Length);
+        var data = new List<int>(array.Count);
         foreach (var str in array)
         {
-            if (!int.TryParse(str, out var v))
-                continue;
-            data.Add(v);
+            if (int.TryParse(str, out var v))
+                data.Add(v);
         }
         return data.ToArray();
     }
@@ -91,17 +126,6 @@ public static class CollectionExtension
             return false;
         return src.Count == target.Count && src.All(target.Contains);
     }
-
-    /// <summary>
-    /// 根据key获取字典内对应的value
-    /// </summary>
-    /// <typeparam name="TKey"></typeparam>
-    /// <typeparam name="TValue"></typeparam>
-    /// <param name="dictionary"></param>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    public static TValue? GetValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key) where TKey : notnull
-        => dictionary.TryGetValue(key, out var value) ? value : default;
 
     /// <summary>
     /// 将当前数组复制一份

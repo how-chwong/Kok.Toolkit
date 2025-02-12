@@ -50,7 +50,7 @@ public abstract class Logger : ILog
     /// <summary>
     /// 配置文件名称
     /// </summary>
-    private const string s_configFileName = "logger.json";
+    public const string ConfigFileName = "logger.json";
 
     /// <summary>
     /// 读取配置
@@ -58,7 +58,7 @@ public abstract class Logger : ILog
     /// <returns></returns>
     protected static LogConfig? ReadConfig()
     {
-        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, s_configFileName);
+        var file = Path.Combine(AppContext.BaseDirectory AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
         if (!File.Exists(file)) return null;
         var str = File.ReadAllText(file);
         return JsonSerializer.Deserialize<LogConfig>(str);
