@@ -58,7 +58,7 @@ public abstract class Logger : ILog
     /// <returns></returns>
     protected static LogConfig? ReadConfig()
     {
-        var file = Path.Combine(AppContext.BaseDirectory AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
+        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
         if (!File.Exists(file)) return null;
         var str = File.ReadAllText(file);
         return JsonSerializer.Deserialize<LogConfig>(str);
