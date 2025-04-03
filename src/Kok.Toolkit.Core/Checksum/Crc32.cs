@@ -9,7 +9,6 @@ public static class Crc32
 {
     #region CRC32 余式表
 
-    //https://www.jianshu.com/p/db31014ce3f3
     private static readonly uint[] s_table0X04C11db7 =
     {
         0x00000000, 0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B, 0x1A864DB2, 0x1E475005,
