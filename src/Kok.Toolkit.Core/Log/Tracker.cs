@@ -36,7 +36,7 @@ public static class Tracker
         if (e.Observed) return;
         foreach (var ex in e.Exception.Flatten().InnerExceptions)
         {
-            WriteError(ex.ToString());
+            WriteWarn(ex.ToString());
         }
         e.SetObserved();
     }
