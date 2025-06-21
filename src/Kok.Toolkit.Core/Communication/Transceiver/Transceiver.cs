@@ -2,6 +2,7 @@
 using Kok.Toolkit.Core.Log;
 using Kok.Toolkit.Core.Net;
 using Kok.Toolkit.Core.Serialization.Binary;
+using Kok.Toolkit.Core.Timers;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -13,6 +14,31 @@ namespace Kok.Toolkit.Core.Communication.Transceiver;
 /// <typeparam name="T"></typeparam>
 public class Transceiver<T> where T : class, new()
 {
+    #region 构造
+
+    /// <summary>
+    /// 定时器类型
+    /// </summary>
+    protected readonly TimerType TimerType = TimerType.AntiReentry;
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    public Transceiver()
+    {
+    }
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="timerType"></param>
+    public Transceiver(TimerType timerType)
+    {
+        TimerType = timerType;
+    }
+
+    #endregion 构造
+
     #region 启动停止
 
     /// <summary>
@@ -58,15 +84,7 @@ public class Transceiver<T> where T : class, new()
             _udpClient.SetIOControl();
 
             _udpClient.BeginReceive(Receive, null);
-            //创建定时器
-            if (TransmitterBuilder?.IsAvailable == true)
-                _timer = new AntiReTimer(
-                    TransmitterBuilder.ChangedJudges!,
-                    SendWork,
-                    TransmitterBuilder,
-                    5000,
-                    TransmitterBuilder.Interval,
-                    TransmitterBuilder.Type == TransmitterType.FixedCycle ? TransmitterBuilder.PeriodCount : 0);
+            BuildTimer(TransmitterBuilder);
             return true;
         }
         catch (Exception ex)
@@ -75,6 +93,24 @@ public class Transceiver<T> where T : class, new()
             Stop();
             return false;
         }
+    }
+
+    /// <summary>
+    /// 构建定时器
+    /// </summary>
+    /// <param name="builder"></param>
+    private void BuildTimer(TransmitterBuilder<T>? builder)
+    {
+        if (builder?.IsAvailable != true) return;
+
+        _timer = TimerType switch
+        {
+            TimerType.Multimedia => new MultimediaTimer(SendWork, builder, builder.Interval),
+            TimerType.AntiReentry => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder,
+                builder.Interval, builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0),
+            _ => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder, builder.Interval,
+                builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0)
+        };
     }
 
     /// <summary>
@@ -101,7 +137,7 @@ public class Transceiver<T> where T : class, new()
     /// <summary>
     /// 定时器
     /// </summary>
-    private AntiReTimer? _timer;
+    private ITimer? _timer;
 
     /// <summary>
     /// 构建发报机

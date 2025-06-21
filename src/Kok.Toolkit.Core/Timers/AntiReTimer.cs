@@ -1,16 +1,16 @@
 ﻿using Kok.Toolkit.Core.Log;
 
-namespace Kok.Toolkit.Core;
+namespace Kok.Toolkit.Core.Timers;
 
 /// <summary>
 /// 防重入定时器
 /// </summary>
-public class AntiReTimer
+public class AntiReTimer : ITimer
 {
     /// <summary>
     /// 定时器
     /// </summary>
-    private Timer? _timer;
+    private System.Threading.Timer? _timer;
 
     /// <summary>
     /// 定时器的执行周期，单位毫秒
@@ -43,14 +43,13 @@ public class AntiReTimer
     /// </summary>
     /// <param name="action">执行方法</param>
     /// <param name="state">执行方法参数</param>
-    /// <param name="dueTime">定时器延迟启动毫秒数</param>
     /// <param name="period">定时器执行间隔毫秒数</param>
-    public AntiReTimer(Action<object?> action, object state, int dueTime = 5000, int period = 1000)
+    public AntiReTimer(Action<object?> action, object? state, int period = 1000)
     {
         _action = action;
         _isResetCounter = null;
         _period = period;
-        _timer = new Timer(DoWork, state, dueTime, _period);
+        _timer = new System.Threading.Timer(DoWork, state, 0, _period);
     }
 
     /// <summary>
@@ -59,15 +58,14 @@ public class AntiReTimer
     /// <param name="isResetCounter">返回值标识是否重新开始计数,true:结束当前计数，从1开始计数；false:当前计数加1</param>
     /// // <param name="action">执行方法</param>
     /// <param name="state">执行方法参数</param>
-    /// <param name="dueTime">定时器延迟启动毫秒数</param>
     /// <param name="period">定时器执行间隔毫秒数</param>
     /// <param name="runTimes">定时器执行最大周期数</param>
-    public AntiReTimer(Func<bool> isResetCounter, Action<object?> action, object state, int dueTime = 5000, int period = 1000, int runTimes = 0)
+    public AntiReTimer(Func<bool>? isResetCounter, Action<object?> action, object? state, int period = 1000, int runTimes = 0)
     {
         _isResetCounter = isResetCounter;
         _action = action;
         _period = period;
-        _timer = new Timer(DoWork, state, dueTime, _period);
+        _timer = new System.Threading.Timer(DoWork, state, 0, _period);
         _runTimes = runTimes;
     }
 
@@ -127,12 +125,22 @@ public class AntiReTimer
     /// <param name="times"></param>
     public void SetRunTimes(int times) => _runTimes = times;
 
+    /// <inheritdoc />
+    public void Change(int period) => SetInterval(0, period);
+
     /// <summary>
     /// 停止定时器
     /// </summary>
     public void Stop()
     {
         _timer?.Change(-1, int.MaxValue);
+        _timer?.Dispose();
+        _timer = null;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
         _timer?.Dispose();
         _timer = null;
     }

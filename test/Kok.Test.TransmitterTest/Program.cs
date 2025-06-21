@@ -1,21 +1,22 @@
 ﻿using Kok.Toolkit.Core.Communication.Transceiver;
 using Kok.Toolkit.Core.Extension;
+using Kok.Toolkit.Core.Timers;
 using System.Net;
 
 namespace Kok.Test.TransmitterTest
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.WriteLine("Hello, Transmitter Tester!");
 
-            var transceiver1 = new Transceiver<MyTelegram>();
+            var transceiver1 = new Transceiver<MyTelegram>(TimerType.Multimedia);
             //创建发报机构建器
             var builder = TransmitterBuilder<MyTelegram>.CreateCyclical(new List<TargetEndPoint>()
             {
                 new("收发器1", new IPEndPoint(IPAddress.Loopback, 8090), null)
-            }, 1000, MakeHelloText, "收发器1");
+            }, 200, MakeHelloText, "收发器1", null, OnSentTelegram);
             //设置发报机
             transceiver1.SetTransmitter(builder);
             //设置收报机
@@ -35,9 +36,13 @@ namespace Kok.Test.TransmitterTest
             receiver.Stop();
         }
 
+        private static void OnSentTelegram(IReadOnlyCollection<byte> arg1, int arg2, DateTime arg3, EndPoint arg4,
+            object? arg5)
+            => Console.WriteLine($"{arg3:HH:mm:ss.fff}    发送数据");
+
         //处理收到的报文
         private static void OnGotTelegram(Packet arg1, object? arg2)
-            => Console.WriteLine($"收到来自{arg1.SourceAddress}:{arg1.SourcePort}的报文,{arg1.Data.ToString("{0:X}")}");
+            => Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff}  收到来自{arg1.SourceAddress}:{arg1.SourcePort}的报文,{arg1.Data.ToString("{0:X}")}");
 
         //生成报文
         private static List<MyTelegram> MakeHelloText(object? arg)

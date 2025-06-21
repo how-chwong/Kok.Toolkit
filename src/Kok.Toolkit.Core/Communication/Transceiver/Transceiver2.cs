@@ -1,4 +1,6 @@
-﻿namespace Kok.Toolkit.Core.Communication.Transceiver;
+﻿using Kok.Toolkit.Core.Timers;
+
+namespace Kok.Toolkit.Core.Communication.Transceiver;
 
 /// <summary>
 /// 收发器
@@ -12,15 +14,26 @@ public class Transceiver<T1, T2> : Transceiver<T1> where T1 : class, new() where
     /// <inheritdoc />
     public override bool Start(string localIp, int localPort, string name = "")
     {
-        if (TransmitterBuilder2?.IsAvailable == true)
-            _timer2 = new AntiReTimer(
-                TransmitterBuilder2.ChangedJudges!,
-                SendWork,
-                TransmitterBuilder2,
-                5000,
-                TransmitterBuilder2.Interval,
-                TransmitterBuilder2?.Type == TransmitterType.FixedCycle ? TransmitterBuilder2.PeriodCount : 0);
+        BuildTimer(TransmitterBuilder2);
         return base.Start(localIp, localPort, name);
+    }
+
+    /// <summary>
+    /// 构建定时器
+    /// </summary>
+    /// <param name="builder"></param>
+    private void BuildTimer(TransmitterBuilder<T2>? builder)
+    {
+        if (builder?.IsAvailable != true) return;
+
+        _timer2 = TimerType switch
+        {
+            TimerType.Multimedia => new MultimediaTimer(SendWork, builder, builder.Interval),
+            TimerType.AntiReentry => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder,
+                builder.Interval, builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0),
+            _ => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder, builder.Interval,
+                builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0)
+        };
     }
 
     /// <inheritdoc />
@@ -42,7 +55,7 @@ public class Transceiver<T1, T2> : Transceiver<T1> where T1 : class, new() where
     /// <summary>
     /// 报文类型2的定时器
     /// </summary>
-    private AntiReTimer? _timer2;
+    private ITimer? _timer2;
 
     /// <summary>
     /// 设置发报机
