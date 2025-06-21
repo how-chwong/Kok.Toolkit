@@ -1,5 +1,6 @@
 ﻿using Kok.Toolkit.Core.Communication.Transceiver;
 using Kok.Toolkit.Core.Extension;
+using Kok.Toolkit.Core.Log;
 using Kok.Toolkit.Core.Timers;
 using System.Net;
 
@@ -10,7 +11,8 @@ namespace Kok.Test.TransmitterTest
         private static void Main(string[] args)
         {
             Console.WriteLine("Hello, Transmitter Tester!");
-
+            Tracker.AddLogger<ExternalOutputLog>(new ExternalOutputLog(OutFunc));
+            Tracker.WriteVersion("Kok");
             var transceiver1 = new Transceiver<MyTelegram>(TimerType.Multimedia);
             //创建发报机构建器
             var builder = TransmitterBuilder<MyTelegram>.CreateCyclical(new List<TargetEndPoint>()
@@ -34,6 +36,12 @@ namespace Kok.Test.TransmitterTest
 
             transceiver1.Stop();
             receiver.Stop();
+        }
+
+        private static Task OutFunc(string arg)
+        {
+            Console.WriteLine(arg);
+            return Task.CompletedTask;
         }
 
         private static void OnSentTelegram(IReadOnlyCollection<byte> arg1, int arg2, DateTime arg3, EndPoint arg4,

@@ -2,14 +2,14 @@
 
 ## 介绍
 
-Kok.Toolkit是个人在工作过程中不断积累的一个.Net平台下的通用代码库，封装多种通用工具类代码，后续也会不断更新，增加更多通用的公共操作类
+Kok.Toolkit是一个.Net平台下的通用代码库，封装多种通用工具类代码，后续也会不断更新，增加更多通用的公共操作类
 
 
 解决方案下包含了存放源码的`src`目录和存放测试代码的`test`目录
 
 | 项目                                                         | 说明                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [Kok.Toolkit.Core](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Core) | 提供通用工具类，如二进制序列化/反序列化器、CRC校验码计算器、日志记录器灯；也提供了若干常用的类型扩展方法 |
+| [Kok.Toolkit.Core](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Core) | 提供通用工具类，如二进制序列化/反序列化器、CRC校验码计算器、日志记录器等；也提供了若干常用的类型扩展方法 |
 | [Kok.Toolkit.Wpf](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Wpf) | 基于[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet/tree/main/src/CommunityToolkit.Mvvm)实现了WPF下的MVVM，提供了视图模型基类、对话框服务、导航服务，并封装了通用WPFHost,也提供了若干常用的转换器等 |
 | [Kok.Toolkit.Avalonia](https://github.com/how-chwong/Kok.Toolkit/tree/main/src/Kok.Toolkit.Avalonia) | 基于[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet/tree/main/src/CommunityToolkit.Mvvm)实现用于Avalonia框架的视图模型基类、对话框、MessageBox，并封装了通用AvaloniaHost |
 
