@@ -58,4 +58,17 @@ public record Packet(DateTime ReceivedTime, string SourceAddress, int SourcePort
 /// <param name="Name">目标名称</param>
 /// <param name="EndPoint">目标终结点</param>
 /// <param name="FinalHandlerArgs">发送给目标前，报文处理函数的入参</param>
-public record TargetEndPoint(string Name, IPEndPoint EndPoint, object[]? FinalHandlerArgs);
+public record TargetEndPoint(string Name, IPEndPoint EndPoint, object[]? FinalHandlerArgs)
+{
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="ip"></param>
+    /// <param name="port"></param>
+    /// <param name="finalHandlerArgs"></param>
+    public TargetEndPoint(string name, string ip, int port, object[]? finalHandlerArgs)
+        : this(name, new IPEndPoint(IPAddress.Parse(ip), port), finalHandlerArgs)
+    {
+    }
+}

@@ -167,11 +167,7 @@ public class Transceiver<T> where T : class, new()
     {
         if (builder.GenerateAction == null) return;
         var data = builder.GenerateAction.Invoke(builder.GenerateArgs);
-        if (data.IsEmpty())
-        {
-            Tracker.WriteWarn($"因生成空报文，无法发送，Action:{builder.GenerateAction.Method.Name}");
-            return;
-        }
+        if (data == null) return;
         if (builder.TargetEndPoints.IsEmpty())
         {
             Tracker.WriteWarn($"未配置{typeof(TMsg)}报文的目标地址，取消该类报文的发送");
@@ -185,18 +181,16 @@ public class Transceiver<T> where T : class, new()
                 return;
             }
             builder.BeforeSendHandler?.Invoke(data, epa.FinalHandlerArgs);
-            foreach (var item in data)
+
+            var r = BinarySerializer.Serialize(data, out var bytes, out var message);
+            if (!r)
             {
-                var r = BinarySerializer.Serialize(item, out var bytes, out var message);
-                if (!r)
-                {
-                    Tracker.WriteError($"序列化失败:Type:{typeof(T).FullName},Message:{message}");
-                    continue;
-                }
-                var len = _udpClient.Send(bytes, bytes.Length, epa.EndPoint);
-                builder.AfterSendHandler?.Invoke(bytes, len, DateTime.Now, epa.EndPoint, builder.GenerateArgs);
-                Tracker.WriteDebug($"向{epa.EndPoint}【{epa.Name}】发送{len}字节，报文类型为{typeof(TMsg).Name}");
+                Tracker.WriteError($"序列化失败:Type:{typeof(T).FullName},Message:{message}");
+                return;
             }
+            var len = _udpClient.Send(bytes, bytes.Length, epa.EndPoint);
+            builder.AfterSendHandler?.Invoke(bytes, len, DateTime.Now, epa.EndPoint, builder.GenerateArgs);
+            Tracker.WriteDebug($"向{epa.EndPoint}【{epa.Name}】发送{len}字节，报文类型为{typeof(TMsg).Name}");
         });
     }
 

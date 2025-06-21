@@ -1,4 +1,5 @@
 ﻿using Kok.Toolkit.Core.Checksum;
+using System.Buffers.Binary;
 
 namespace Kok.Toolkit.Core.Serialization.Binary.Attributes;
 
@@ -44,12 +45,19 @@ public class Crc16Attribute : Attribute
     public Crc16Algorithm Algorithm { get; }
 
     /// <summary>
+    /// 是否反转字节序
+    /// </summary>
+    public bool IsReverseEndian { get; }
+
+    /// <summary>
     /// 构造CRC-16特性
     /// </summary>
     /// <param name="algorithm"></param>
-    public Crc16Attribute(Crc16Algorithm algorithm = Crc16Algorithm.CRC_16_CCITT)
+    /// <param name="isReverseEndian"></param>
+    public Crc16Attribute(Crc16Algorithm algorithm = Crc16Algorithm.CRC_16_CCITT, bool isReverseEndian = false)
     {
         Algorithm = algorithm;
+        IsReverseEndian = isReverseEndian;
     }
 
     /// <summary>
@@ -59,7 +67,11 @@ public class Crc16Attribute : Attribute
     /// <param name="start"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public ushort Compute(byte[] data, int start, int length) => Crc.Compute(data, Algorithm, start, length);
+    public ushort Compute(byte[] data, int start, int length)
+    {
+        var crc = Crc.Compute(data, Algorithm, start, length);
+        return IsReverseEndian ? BinaryPrimitives.ReverseEndianness(crc) : crc;
+    }
 }
 
 /// <summary>
@@ -74,12 +86,19 @@ public class Crc32Attribute : Attribute
     public Crc32Algorithm Algorithm { get; }
 
     /// <summary>
+    /// 是否反转字节序
+    /// </summary>
+    public bool IsReverseEndian { get; }
+
+    /// <summary>
     /// 构造CRC-32特性
     /// </summary>
     /// <param name="algorithm"></param>
-    public Crc32Attribute(Crc32Algorithm algorithm = Crc32Algorithm.CRC_32_STANDARD)
+    /// <param name="isReverseEndian"></param>
+    public Crc32Attribute(Crc32Algorithm algorithm = Crc32Algorithm.CRC_32_STANDARD, bool isReverseEndian = false)
     {
         Algorithm = algorithm;
+        IsReverseEndian = isReverseEndian;
     }
 
     /// <summary>
@@ -89,5 +108,9 @@ public class Crc32Attribute : Attribute
     /// <param name="start"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public uint Compute(byte[] data, int start, int length) => Crc.Compute(data, Algorithm, start, length);
+    public uint Compute(byte[] data, int start, int length)
+    {
+        var crc = Crc.Compute(data, Algorithm, start, length);
+        return IsReverseEndian ? BinaryPrimitives.ReverseEndianness(crc) : crc;
+    }
 }

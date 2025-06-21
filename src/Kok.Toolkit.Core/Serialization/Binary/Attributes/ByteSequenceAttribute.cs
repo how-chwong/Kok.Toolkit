@@ -13,12 +13,19 @@ public class ByteSequenceAttribute : Attribute
     public int Sequence { get; }
 
     /// <summary>
+    /// 字节长度
+    /// </summary>
+    public int Length { get; }
+
+    /// <summary>
     /// 构造特性
     /// </summary>
     /// <param name="sequence"></param>
-    public ByteSequenceAttribute(int sequence)
+    /// <param name="length"></param>
+    public ByteSequenceAttribute(int sequence, int length = 1)
     {
         Sequence = sequence;
+        Length = length;
     }
 }
 
@@ -35,17 +42,24 @@ public class BitSequenceAttribute : Attribute
     public int Sequence { get; }
 
     /// <summary>
+    /// 位长度
+    /// </summary>
+    public byte Length { get; }
+
+    /// <summary>
     /// 构造特性
     /// </summary>
     /// <param name="sequence"></param>
-    public BitSequenceAttribute(int sequence)
+    /// <param name="length"></param>
+    public BitSequenceAttribute(int sequence, byte length = 1)
     {
         Sequence = sequence;
+        Length = length;
     }
 }
 
 /// <summary>
-/// 字节开始值
+/// 位开始值
 /// 仅显示功能
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]

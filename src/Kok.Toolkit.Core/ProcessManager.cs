@@ -54,7 +54,7 @@ public static class ProcessManager
     /// 停止指定进程
     /// </summary>
     /// <param name="process"></param>
-    public static void Stop(Process process)
+    public static void Stop(Process? process)
     {
         process?.Kill();
         process?.Dispose();

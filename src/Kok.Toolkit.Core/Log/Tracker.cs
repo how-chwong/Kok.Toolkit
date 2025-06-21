@@ -1,5 +1,5 @@
-﻿using System.Collections.Concurrent;
-using System.Reflection.Metadata;
+﻿using Kok.Toolkit.Core.Extension;
+using System.Collections.Concurrent;
 
 namespace Kok.Toolkit.Core.Log;
 
@@ -36,7 +36,7 @@ public static class Tracker
         if (e.Observed) return;
         foreach (var ex in e.Exception.Flatten().InnerExceptions)
         {
-            WriteError(ex.ToString());
+            WriteWarn(ex.ToString());
         }
         e.SetObserved();
     }
@@ -93,14 +93,27 @@ public static class Tracker
     /// <summary>
     /// 修改指定类型的日志处理器的最小日志级别
     /// </summary>
-    /// <param name="type">日志处理器类型</param>
     /// <param name="level">最小日志级别</param>
     /// <returns></returns>
-    public static bool ChangeMinLogLevel(Type type, LogLevel level)
+    public static bool ChangeMinLogLevel<T>(LogLevel level) where T : Logger
     {
-        if (!s_loggers.TryGetValue(type, out var logger)) return false;
+        if (!s_loggers.TryGetValue(typeof(T), out var logger)) return false;
         logger.ChangeMiniLevel(level);
         return true;
+    }
+
+    /// <summary>
+    /// 更新日志文件的子目录
+    /// </summary>
+    /// <param name="path"></param>
+    public static void SetSubSystemPath(string path)
+    {
+        if (s_loggers.IsEmpty) return;
+        foreach (var log in s_loggers.Values)
+        {
+            if (log is FileLog fileLog) fileLog.SetSubSystemPath(path);
+            if (log is LevelLog levelLog) levelLog.SetSubSystemPath(path);
+        }
     }
 
     #endregion 启用日志处理器
@@ -178,4 +191,24 @@ public static class Tracker
     public static void WriteFatal(string message) => WriteLine(message, LogLevel.Fatal);
 
     #endregion 日志输出
+
+    /// <summary>
+    /// 输出版本信息
+    /// </summary>
+    /// <param name="prefix"></param>
+    public static void WriteVersion(string prefix)
+    {
+        if (string.IsNullOrWhiteSpace(prefix)) return;
+        var assembly = Assembly.GetCallingAssembly();
+
+        WriteInfo($"{assembly.Name()} {assembly.Version()} Build {assembly.CompileTime()}");
+        var others = assembly.GetReferencedAssemblies()
+            .Where(n => n.Name != null && n.Name.StartsWith(prefix)).ToArray();
+        if (others.Length > 0)
+            Array.ForEach(others, name =>
+            {
+                var asm = Assembly.Load(name);
+                WriteInfo($"{asm.Name()} {asm.Version()} Build {asm.CompileTime()}");
+            });
+    }
 }

@@ -14,6 +14,13 @@ public interface IDialogService
     void Show<T>() where T : Window;
 
     /// <summary>
+    /// 非模态带参弹窗
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="parameter"></param>
+    void Show<T>(object parameter) where T : Window, IWithParameterWindow;
+
+    /// <summary>
     /// 模态弹窗
     /// </summary>
     /// <typeparam name="T"></typeparam>

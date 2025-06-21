@@ -17,7 +17,7 @@ public class ReactiveCommunicator
     /// </summary>
     /// <param name="receiveAction">收到报文后的处理函数</param>
     /// <param name="generateAck">生成回应报文的函数</param>
-    public ReactiveCommunicator(Func<Packet, bool> receiveAction, Func<byte[]> generateAck)
+    public ReactiveCommunicator(Func<Packet, bool> receiveAction, Func<byte[], byte[]> generateAck)
     {
         _receiveAction = receiveAction;
         _generateAck = generateAck;
@@ -55,7 +55,13 @@ public class ReactiveCommunicator
     private bool _isReceiverStopped;
 
     private readonly Func<Packet, bool> _receiveAction;
-    private readonly Func<byte[]> _generateAck;
+
+    /// <summary>
+    /// 生成回应报文
+    /// byte[]: 收到的报文
+    /// byte[]: 回应的报文
+    /// </summary>
+    private readonly Func<byte[], byte[]> _generateAck;
 
     private void Receive(IAsyncResult result)
     {
@@ -66,7 +72,7 @@ public class ReactiveCommunicator
             var buf = _udpClient.EndReceive(result, ref src);
             if (_isReceiverStopped) return;
             if (!_receiveAction.Invoke(new Packet(DateTime.Now, src?.Address.ToString() ?? string.Empty, src?.Port ?? 0, buf))) return;
-            var data = _generateAck.Invoke();
+            var data = _generateAck.Invoke(buf);
             if (data is { Length: > 0 }) _udpClient.Send(data, data.Length, src);
         }
         catch (Exception ex)
@@ -77,6 +83,25 @@ public class ReactiveCommunicator
         {
             if (!_isReceiverStopped)
                 _udpClient?.BeginReceive(Receive, null);
+        }
+    }
+
+    /// <summary>
+    /// 发送报文
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="ip"></param>
+    /// <returns></returns>
+    public (bool result, string error) Send(byte[] message, IPEndPoint ip)
+    {
+        try
+        {
+            _udpClient?.Send(message, message.Length, ip);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
         }
     }
 
