@@ -113,5 +113,8 @@ public sealed class MultimediaTimer : ITimer
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// 析构函数，确保资源被释放
+    /// </summary>
     ~MultimediaTimer() => Dispose();
 }
