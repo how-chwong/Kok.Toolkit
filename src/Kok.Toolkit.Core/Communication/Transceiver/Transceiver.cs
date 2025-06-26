@@ -22,6 +22,16 @@ public class Transceiver<T> where T : class, new()
     protected readonly TimerType TimerType = TimerType.AntiReentry;
 
     /// <summary>
+    /// 收发器使用的UDP通信客户端
+    /// </summary>
+    private UdpClient? _udpClient;
+
+    /// <summary>
+    /// 收发器名称
+    /// </summary>
+    public string Name { get; protected set; } = string.Empty;
+
+    /// <summary>
     /// 构造函数
     /// </summary>
     public Transceiver()
@@ -41,15 +51,7 @@ public class Transceiver<T> where T : class, new()
 
     #region 启动停止
 
-    /// <summary>
-    /// 收发器使用的UDP通信客户端
-    /// </summary>
-    private UdpClient? _udpClient;
-
-    /// <summary>
-    /// 收发器名称
-    /// </summary>
-    public string Name { get; protected set; } = string.Empty;
+    private CancellationTokenSource? _cts;
 
     /// <summary>
     /// 启动收发器
@@ -82,7 +84,7 @@ public class Transceiver<T> where T : class, new()
 
             _udpClient = new UdpClient(localEndPoint);
             _udpClient.SetIOControl();
-
+            _cts = new CancellationTokenSource();
             _udpClient.BeginReceive(Receive, null);
             BuildTimer(TransmitterBuilder);
             return true;
@@ -106,8 +108,6 @@ public class Transceiver<T> where T : class, new()
         _timer = TimerType switch
         {
             TimerType.Multimedia => new MultimediaTimer(SendWork, builder, builder.Interval),
-            TimerType.AntiReentry => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder,
-                builder.Interval, builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0),
             _ => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder, builder.Interval,
                 builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0)
         };
@@ -118,11 +118,24 @@ public class Transceiver<T> where T : class, new()
     /// </summary>
     public virtual void Stop()
     {
-        _isReceiverStopped = true;
+        _cts?.Cancel();
         _timer?.Stop();
-        Thread.Sleep(500);
-        _udpClient?.Close();
-        _udpClient?.Dispose();
+        _timer?.Dispose();
+        _timer = null;
+        Thread.Sleep(100); // 给线程释放时间
+        if (_udpClient != null)
+        {
+            try { _udpClient.Close(); }
+            catch
+            {
+                // ignored
+            }
+
+            _udpClient.Dispose();
+            _udpClient = null;
+        }
+        _cts?.Dispose();
+        _cts = null;
     }
 
     #endregion 启动停止
@@ -215,28 +228,41 @@ public class Transceiver<T> where T : class, new()
     /// </summary>
     /// <param name="receiveAction">数据包处理行为</param>
     /// <param name="args">报文处理参数</param>
-    public void SetReceiver(Action<Packet, object?> receiveAction, object? args = null)
+    /// <param name="onlyNewest">是否只处理最新的数据</param>
+    public void SetReceiver(Action<Packet, object?> receiveAction, object? args = null, bool onlyNewest = false)
     {
         ReceiveAction = receiveAction;
-        _isReceiverStopped = false;
+        _cts ??= new CancellationTokenSource();
         Task.Factory.StartNew(() =>
         {
-            while (!_isReceiverStopped)
+            while (!_cts.Token.IsCancellationRequested)
             {
                 try
                 {
                     if (ReceiveAction == null)
                     {
                         Tracker.WriteWarn($"报文收发器{Name}未设置对报文处理操作");
-                        _isReceiverStopped = true;
                         _cache.Clear();
-                        return;
+                        break;
                     }
 
-                    if (_cache.TryDequeue(out var packet))
-                        ReceiveAction.Invoke(packet, args);
+                    Packet? temp = null;
+                    if (onlyNewest)
+                    {
+                        var count = _cache.Count;
+                        for (var i = 0; i < count; i++)
+                        {
+                            temp = _cache.TryDequeue(out var data) ? data : null;
+                        }
+                    }
+                    else
+                    {
+                        temp = _cache.TryDequeue(out var data) ? data : null;
+                    }
+                    if (temp != null)
+                        ReceiveAction.Invoke(temp, args);
 
-                    Thread.Sleep(1);
+                    Thread.Sleep(10);
                 }
                 catch (Exception e)
                 {
@@ -246,9 +272,6 @@ public class Transceiver<T> where T : class, new()
         }, TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness);
     }
 
-    //标识收报机是否在工作
-    private bool _isReceiverStopped;
-
     private void Receive(IAsyncResult result)
     {
         try
@@ -256,7 +279,7 @@ public class Transceiver<T> where T : class, new()
             if (_udpClient == null) return;
             IPEndPoint? src = null;
             var buf = _udpClient.EndReceive(result, ref src);
-            if (_isReceiverStopped) return;
+            if (_cts == null || _cts.Token.IsCancellationRequested) return;
             _cache.Enqueue(new Packet(DateTime.Now, src?.Address.ToString() ?? string.Empty, src?.Port ?? 0, buf));
         }
         catch (Exception ex)
@@ -265,7 +288,7 @@ public class Transceiver<T> where T : class, new()
         }
         finally
         {
-            if (!_isReceiverStopped)
+            if (_cts?.Token.IsCancellationRequested != true)
                 _udpClient?.BeginReceive(Receive, null);
         }
     }
