@@ -108,9 +108,7 @@ public class Transceiver<T> where T : class, new()
         _timer = TimerType switch
         {
             TimerType.Multimedia => new MultimediaTimer(SendWork, builder, builder.Interval),
-            TimerType.AntiReentry => new AntiReTimer(builder.ChangedJudges, SendWork, builder,
-                builder.Interval, builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0),
-            _ => new AntiReTimer(builder.ChangedJudges, SendWork, builder, builder.Interval,
+
             _ => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder, builder.Interval,
                 builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0)
         };

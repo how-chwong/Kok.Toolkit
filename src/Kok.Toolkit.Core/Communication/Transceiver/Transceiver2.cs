@@ -29,8 +29,7 @@ public class Transceiver<T1, T2> : Transceiver<T1> where T1 : class, new() where
         _timer2 = TimerType switch
         {
             TimerType.Multimedia => new MultimediaTimer(SendWork, builder, builder.Interval),
-            TimerType.AntiReentry => new AntiReTimer(builder.ChangedJudges, SendWork, builder,
-                builder.Interval, builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0),
+
             _ => new AntiReTimer(builder.ChangedJudges, SendWork, builder, builder.Interval,
                 builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0)
         };
@@ -80,7 +79,7 @@ public class Transceiver<T1, T2> : Transceiver<T1> where T1 : class, new() where
     /// <inheritdoc />
     protected override void SendWork(object? transmitterBuilder)
     {
-        //  base.SendWork(transmitterBuilder);
+        base.SendWork(transmitterBuilder);
         if (transmitterBuilder is TransmitterBuilder<T2> builder)
             MessageSender(builder);
     }
