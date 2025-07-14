@@ -13,7 +13,7 @@ namespace Kok.Test.TransmitterTest
             Console.WriteLine("Hello, Transmitter Tester!");
             Tracker.AddLogger<ExternalOutputLog>(new ExternalOutputLog(OutFunc));
             Tracker.WriteVersion("Kok");
-            var transceiver1 = new Transceiver<MyTelegram>(TimerType.Multimedia);
+            var transceiver1 = new Transceiver<MyTelegram2, MyTelegram>();
             //创建发报机构建器
             var builder = TransmitterBuilder<MyTelegram>.CreateCyclical(new List<TargetEndPoint>()
             {
@@ -72,5 +72,10 @@ namespace Kok.Test.TransmitterTest
             Id = id;
             Content = content;
         }
+    }
+
+    public class MyTelegram2
+    {
+        public int Id { get; set; }
     }
 }
