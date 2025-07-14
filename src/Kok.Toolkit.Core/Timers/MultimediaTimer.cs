@@ -53,21 +53,20 @@ public sealed class MultimediaTimer : ITimer
     public void Change(int period)
     {
         if (_disposed) return;
-        if (_timerId != 0)
+
+        if (period is < 0 or int.MaxValue)
         {
+            if (_timerId == 0) return;
+
             timeKillEvent(_timerId);
             _timerId = 0;
+            return;
         }
-        if (period < 0) return;
         // 启动新定时器 (0 = 单次执行, 1 = 周期执行)
         uint eventType = period <= 0 ? 0u : 1u;
 
-        _timerId = timeSetEvent(
-            msDelay: (uint)Math.Max(1, period),
-            msResolution: 1,
-            handler: _nativeCallback,
-            userCtx: IntPtr.Zero,
-            eventType: eventType);
+        // 启动定时器
+        _timerId = timeSetEvent((uint)Math.Max(1, period), 1, _nativeCallback, IntPtr.Zero, eventType);
 
         if (_timerId == 0)
         {
@@ -113,5 +112,8 @@ public sealed class MultimediaTimer : ITimer
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// 析构函数，确保资源被释放
+    /// </summary>
     ~MultimediaTimer() => Dispose();
 }
