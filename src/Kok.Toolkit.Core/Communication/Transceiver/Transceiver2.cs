@@ -29,9 +29,7 @@ public class Transceiver<T1, T2> : Transceiver<T1> where T1 : class, new() where
         _timer2 = TimerType switch
         {
             TimerType.Multimedia => new MultimediaTimer(SendWork, builder, builder.Interval),
-            TimerType.AntiReentry => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder,
-                builder.Interval, builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0),
-            _ => new AntiReTimer(builder.ChangedJudges, SendWork, TransmitterBuilder, builder.Interval,
+            _ => new AntiReTimer(builder.ChangedJudges, SendWork, builder, builder.Interval,
                 builder.Type == TransmitterType.FixedCycle ? builder.PeriodCount : 0)
         };
     }
