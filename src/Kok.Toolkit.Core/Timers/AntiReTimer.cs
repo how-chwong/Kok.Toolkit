@@ -49,7 +49,7 @@ public class AntiReTimer : ITimer
         _action = action;
         _isResetCounter = null;
         _period = period;
-        _timer = new System.Threading.Timer(DoWork, state, 0, _period);
+        _timer = new Timer(DoWork, state, 0, _period);
     }
 
     /// <summary>
