@@ -83,17 +83,29 @@ public static class Crc8
 
     #endregion CRC8余式表
 
-    private static byte Compute(ReadOnlySpan<byte> data, int start, int length, byte shift, ReadOnlySpan<byte> table, byte init, bool refIn,
+    /// <summary>
+    /// 计算给定数据的CRC-8校验和
+    /// </summary>
+    /// <param name="data">给定的数据</param>
+    /// <param name="start">起始索引</param>
+    /// <param name="length">计算长度</param>
+    /// <param name="table">余式表</param>
+    /// <param name="init">初始值</param>
+    /// <param name="refIn">是否输入反转</param>
+    /// <param name="refOut">是否输出反转</param>
+    /// <param name="xorOut">结果异或值</param>
+    /// <returns></returns>
+    public static byte Compute(ReadOnlySpan<byte> data, int start, int length, ReadOnlySpan<byte> table, byte init, bool refIn,
         bool refOut, byte xorOut)
     {
-        var crc = (byte)(init << shift);
+        var crc = init;
 
         for (var j = start; j < start + length; j++)
         {
             var dataByte = refIn ? data[j].Reverse() : data[j];
-            crc = (byte)(table[(crc ^ dataByte)] << shift);
+            crc = table[(crc ^ dataByte)];
         }
-        crc = refOut ? crc.Reverse() : (byte)(crc >> shift);
+        crc = refOut ? crc.Reverse() : crc;
         return (byte)(crc ^ xorOut);
     }
 
@@ -110,7 +122,7 @@ public static class Crc8
         /// <param name="length"></param>
         /// <returns></returns>
         public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
-            => Crc8.Compute(data, start, length, 0, s_table0X07, 0, false, false, 0x00);
+            => Crc8.Compute(data, start, length, s_table0X07, 0, false, false, 0x00);
 
         /// <summary>
         /// 计算校验和
@@ -134,7 +146,7 @@ public static class Crc8
         /// <param name="length"></param>
         /// <returns></returns>
         public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
-            => Crc8.Compute(data, start, length, 0, s_table0X07, 0x00, false, false, 0x55);
+            => Crc8.Compute(data, start, length, s_table0X07, 0x00, false, false, 0x55);
 
         /// <summary>
         /// 计算校验和
@@ -158,7 +170,7 @@ public static class Crc8
         /// <param name="length"></param>
         /// <returns></returns>
         public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
-            => Crc8.Compute(data, start, length, 0, s_table0X07, 0xFF, true, true, 0x00);
+            => Crc8.Compute(data, start, length, s_table0X07, 0xFF, true, true, 0x00);
 
         /// <summary>
         /// 计算校验和
@@ -182,7 +194,7 @@ public static class Crc8
         /// <param name="length"></param>
         /// <returns></returns>
         public static byte Compute(ReadOnlySpan<byte> data, int start, int length)
-            => Crc8.Compute(data, start, length, 0, s_table0X31, 0x00, true, true, 0x00);
+            => Crc8.Compute(data, start, length, s_table0X31, 0x00, true, true, 0x00);
 
         /// <summary>
         /// 计算校验和

@@ -47,7 +47,19 @@ public static class Crc32
 
     #endregion CRC32 余式表
 
-    private static uint Compute(ReadOnlySpan<byte> data, int start, int length, ReadOnlySpan<uint> table, uint init, bool refIn,
+    /// <summary>
+    /// 计算给定数据的CRC-32校验和
+    /// </summary>
+    /// <param name="data">给定的数据</param>
+    /// <param name="start">起始索引</param>
+    /// <param name="length">计算长度</param>
+    /// <param name="table">余式表</param>
+    /// <param name="init">初始值</param>
+    /// <param name="refIn">是否输入反转</param>
+    /// <param name="refOut">是否输出反转</param>
+    /// <param name="xorOut">结果异或值</param>
+    /// <returns></returns>
+    public static uint Compute(ReadOnlySpan<byte> data, int start, int length, ReadOnlySpan<uint> table, uint init, bool refIn,
         bool refOut, uint xorOut)
     {
         if (data == null)
