@@ -1,6 +1,7 @@
 ﻿using Kok.Toolkit.Core.Extension;
 using Kok.Toolkit.Core.Net;
 using Kok.Toolkit.Core;
+using System.Collections;
 
 namespace Kok.Toolkit.Test
 {
@@ -52,6 +53,27 @@ namespace Kok.Toolkit.Test
         public void GetBitValue(byte value, int newValue, int start, int end)
         {
             Assert.Equal(newValue, value.GetBitValue(start, end));
+        }
+
+        [Theory]
+        [InlineData(new[] { true, true, true, true, true, true, true, true }, 0xFF, true, true)]
+        [InlineData(new[] { true, true, true, true, false, false, false, false }, 0x0F, true, true)]
+        [InlineData(new[] { true, true, true, true }, 0xF0, true, false)]
+        public void BitArrayToByte(bool[] bits, byte value, bool isLowIndex, bool isLowBit)
+        {
+            Assert.Equal(value, new BitArray(bits).ToByte(isLowIndex, isLowBit));
+        }
+
+        [Theory]
+        [InlineData(new[] { true, true, true, true, true, true, true, true }, new byte[] { 0xFF }, true, true)]
+        [InlineData(new[] { true, true, true, true, false, false, false, false }, new byte[] { 0x0F }, true, true)]
+        [InlineData(new[] { true, true, true, true }, new byte[] { 0xF0 }, true, false)]
+        public void BitArrayToByteArray(bool[] bits, byte[] value, bool isLowIndex, bool isLowBit)
+        {
+            var temp = new BitArray(bits).ToByteArray(isLowIndex, isLowBit);
+            for (var i = 0; i < temp.Length; i++)
+
+                Assert.Equal(value[i], temp[i]);
         }
 
         [Fact]

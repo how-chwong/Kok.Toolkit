@@ -248,33 +248,36 @@ public static class ValueExtension
     /// 将指定的位数组转换为字节数组
     /// </summary>
     /// <param name="value"></param>
-    /// <param name="fromLowBit">位数组是从低位开始</param>
+    /// <param name="fromLowIndex">位数组是从开始遍历</param>
+    /// <param name="isLowBit">遍历到的位是否位字节的低位</param>
     /// <returns></returns>
-    public static byte[] ToByteArray(this BitArray value, bool fromLowBit = false)
+    public static byte[] ToByteArray(this BitArray value, bool fromLowIndex = false, bool isLowBit = false)
     {
         var byteCount = value.Length % 8 > 0 ? value.Length / 8 + 1 : value.Length / 8;
         var result = new byte[byteCount];
         var bitPosition = 0;
-        if (fromLowBit)
+        if (fromLowIndex)
         {
             for (var i = 0; i < result.Length; i++)
             {
                 for (var j = 0; j < 8 && bitPosition < value.Length; j++, bitPosition++)
                 {
-                    result[i] = result[i].SetBitValue(j, value[bitPosition]);
+                    result[i] = isLowBit
+                        ? result[i].SetBitValue(j, value[bitPosition])
+                        : result[i].SetBitValue(7 - j, value[bitPosition]);
                 }
             }
         }
         else
         {
+            bitPosition = value.Length - 1;
             for (var i = 0; i < result.Length; i++)
             {
-                for (var j = 7; j >= 0 && bitPosition < value.Length; j--)
+                for (var j = 0; j < 8 && bitPosition >= 0; j++, bitPosition--)
                 {
-                    if (value.Length - bitPosition <= j)
-                        continue;
-                    result[i] = result[i].SetBitValue(j, value[bitPosition]);
-                    bitPosition++;
+                    result[i] = isLowBit
+                        ? result[i].SetBitValue(j, value[bitPosition])
+                        : result[i].SetBitValue(7 - j, value[bitPosition]);
                 }
             }
         }
@@ -303,24 +306,27 @@ public static class ValueExtension
     /// 将位数组转换为字节
     /// </summary>
     /// <param name="value"></param>
-    /// <param name="fromLowBit">位数组是否从低位开始</param>
+    /// <param name="fromLowIndex">位数组遍历是否从0开始</param>
+    /// <param name="isLowBit">位值是否按先低位后高位</param>
     /// <returns></returns>
-    public static byte ToByte(this BitArray value, bool fromLowBit = false)
+    public static byte ToByte(this BitArray value, bool fromLowIndex = false, bool isLowBit = true)
     {
         if (value.Length > 8)
             throw new ArgumentException("位数组的长度不能大于8");
         byte result = 0;
-        if (fromLowBit)
+        if (fromLowIndex)
         {
             for (var i = 0; i < value.Length; i++)
-                result = result.SetBitValue(i, value[i]);
+                result = isLowBit
+                    ? result.SetBitValue(i, value[i])
+                    : result.SetBitValue(7 - i, value[i]);
         }
         else
         {
             var index = 0;
             for (var i = value.Length - 1; i >= 0; i--)
             {
-                result = result.SetBitValue(index, value[i]);
+                result = isLowBit ? result.SetBitValue(index, value[i]) : result.SetBitValue(7 - index, value[i]);
                 index++;
             }
         }
