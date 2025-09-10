@@ -251,7 +251,7 @@ public static class ValueExtension
     /// <param name="fromLowIndex">位数组是从开始遍历</param>
     /// <param name="isLowBit">遍历到的位是否位字节的低位</param>
     /// <returns></returns>
-    public static byte[] ToByteArray(this BitArray value, bool fromLowIndex = false, bool isLowBit = false)
+    public static byte[] ToByteArray(this BitArray value, bool fromLowIndex = true, bool isLowBit = false)
     {
         var byteCount = value.Length % 8 > 0 ? value.Length / 8 + 1 : value.Length / 8;
         var result = new byte[byteCount];
