@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Kok.Toolkit.Avalonia.Dialogs;
+using Kok.Toolkit.Core.Log;
 using Microsoft.Extensions.Hosting;
 
 namespace Kok.Toolkit.Avalonia.Hosting;
@@ -40,12 +41,12 @@ public class AvaloniaHost
     /// </summary>
     /// <typeparam name="T">窗体类型</typeparam>
     /// <param name="desktop">桌面程序</param>
-    public async Task Run<T>(IClassicDesktopStyleApplicationLifetime desktop) where T : Window
+    public void Run<T>(IClassicDesktopStyleApplicationLifetime desktop) where T : Window
     {
         var win = Ioc.Default.GetService<T>();
         if (win == null)
         {
-            MessageBox.ShowAsync($"初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{desktop.Args}");
+            Tracker.WriteError($"初始化失败，未发现指定启动类型：{typeof(T).Name},启动参数：{desktop.Args}");
             return;
         }
         desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -54,6 +55,17 @@ public class AvaloniaHost
         {
             using (_host) await _host.StopAsync();
         };
+    }
+
+    /// <summary>
+    /// 运行指定的窗体并启动宿主
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="desktop"></param>
+    /// <returns></returns>
+    public async Task RunAndStart<T>(IClassicDesktopStyleApplicationLifetime desktop) where T : Window
+    {
+        Run<T>(desktop);
         await StartAsync();
     }
 

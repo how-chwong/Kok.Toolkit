@@ -16,8 +16,7 @@ public static class Tracker
     static Tracker()
     {
         AddLogger(new LevelLog());
-        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
         AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
     }
 
@@ -48,6 +47,15 @@ public static class Tracker
     }
 
     #region 启用日志处理器
+
+    /// <summary>
+    /// 记录未处理的异常
+    /// </summary>
+    public static void LogUnhandledException()
+    {
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+    }
 
     /// <summary>
     /// 增加日志处理器

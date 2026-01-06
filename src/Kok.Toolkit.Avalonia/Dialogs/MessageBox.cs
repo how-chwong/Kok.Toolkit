@@ -1,4 +1,5 @@
 ﻿using Kok.Toolkit.Avalonia.Hosting;
+using Kok.Toolkit.Core.Log;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Enums;
@@ -15,9 +16,14 @@ public static class MessageBox
     /// </summary>
     /// <param name="message"></param>
     /// <param name="title"></param>
-    public static async void ShowAsync(string message, string title = "提示")
+    public static async Task ShowAsync(string message, string title = "提示")
     {
-        var win = AvaloniaHost.CurrentWindow ?? throw new InvalidOperationException("不支持在未激活的窗体弹窗");
+        var win = AvaloniaHost.CurrentWindow ?? AvaloniaHost.MainWindow;
+        if (win == null)
+        {
+            Tracker.WriteError("不支持在未激活的窗体弹窗");
+            return;
+        }
         await GetMessageBox(message, title, ButtonEnum.Ok).ShowAsPopupAsync(win);
     }
 
@@ -29,7 +35,12 @@ public static class MessageBox
     /// <returns></returns>
     public static async Task<bool> AskAsync(string message, string title = "询问")
     {
-        var win = AvaloniaHost.CurrentWindow ?? throw new InvalidOperationException("不支持在未激活的窗体弹窗");
+        var win = AvaloniaHost.CurrentWindow ?? AvaloniaHost.MainWindow;
+        if (win == null)
+        {
+            Tracker.WriteError("不支持在未激活的窗体弹窗");
+            return false;
+        }
 
         var result = await GetMessageBox(message, title, ButtonEnum.YesNo).ShowAsPopupAsync(win);
         return result is ButtonResult.Yes;
