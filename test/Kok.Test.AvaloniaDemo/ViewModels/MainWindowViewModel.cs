@@ -16,17 +16,22 @@ namespace Kok.Test.AvaloniaDemo.ViewModels
         private readonly IDialogService _dialogs;
         private readonly IConfiguration _configuration;
         private readonly ITestService _service;
+        private readonly TestConfigService2 _configService2;
 
-        public MainWindowViewModel(IConfiguration configuration, INavigationService navigation, IDialogService dialogs, ITestService service)
+        public MainWindowViewModel(IConfiguration configuration, INavigationService navigation, IDialogService dialogs, ITestService service, TestConfigService2 configService2)
         {
             _service = service;
+            _configService2 = configService2;
             _configuration = configuration;
             _navigation = navigation;
             _dialogs = dialogs;
             WinTitle = App.GetStringArg(_configuration, CommandArgType.ConfigFile);
             _service.OnStatusChanged = (val) => IsRunning = val;
             IsRunning = _service.IsRunning;
+            _myUri = _configService2.GetUri();
         }
+
+        [ObservableProperty] private string _myUri;
 
         [ObservableProperty] private bool _isRunning;
 

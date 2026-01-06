@@ -20,7 +20,10 @@ namespace Kok.Test.AvaloniaDemo
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            _host = new AvaloniaHostBuilder(desktop.Args ?? Array.Empty<string>()).ConfigureServices(AddServices).Build();
+            _host = new AvaloniaHostBuilder(desktop.Args ?? Array.Empty<string>())
+                .AddJsonConfiguration("AppSetting.json")
+                .ConfigureServices(AddServices)
+                .Build();
         }
 
         public override void Initialize()
@@ -50,8 +53,10 @@ namespace Kok.Test.AvaloniaDemo
             await _host.StartAsync();
         }
 
-        private static void AddServices(IServiceCollection services)
+        private static void AddServices(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<TestConfigService>();
+            services.AddTestConfigService(configuration);
             services.AddSingleton<ITestService, TestService>();
             services.AddHostedService<TestHostedService>();
             services.AddNavigationService();

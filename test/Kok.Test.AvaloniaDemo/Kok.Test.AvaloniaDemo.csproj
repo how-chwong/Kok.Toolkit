@@ -25,4 +25,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Kok.Toolkit.Avalonia\Kok.Toolkit.Avalonia.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AppSetting.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

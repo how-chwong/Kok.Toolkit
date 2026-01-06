@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Kok.Toolkit.Avalonia.Dialogs;
 using Kok.Toolkit.Core.Log;
 using Microsoft.Extensions.Hosting;
 

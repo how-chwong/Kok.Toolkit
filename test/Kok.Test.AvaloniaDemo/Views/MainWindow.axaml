@@ -14,7 +14,7 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
-	<Grid RowDefinitions="20,50,Auto,Auto">
+	<Grid RowDefinitions="20,50,Auto,Auto,Auto">
 		<Menu>
 			<MenuItem Header="视图">
 				<MenuItem Command="{Binding OpenFirstWinCommand}" Header="窗口1" />
@@ -30,5 +30,6 @@
             VerticalAlignment="Center"
             Text="{Binding Greeting}" />
 		<TextBlock Grid.Row="3" Text="{Binding IsRunning}" />
+        <TextBlock Grid.Row="4" Text="{Binding MyUri}"></TextBlock>
 	</Grid>
 </Window>
