@@ -49,6 +49,11 @@ namespace Kok.Toolkit.Avalonia.Hosting
             return this;
         }
 
+        /// <summary>
+        /// 注入服务，带配置文件参数
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public AvaloniaHostBuilder ConfigureServices(Action<IServiceCollection, IConfiguration> services)
         {
             _builder.ConfigureServices((context, collection) =>
