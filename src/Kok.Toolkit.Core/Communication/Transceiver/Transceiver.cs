@@ -223,14 +223,22 @@ public class Transceiver<T> where T : class, new()
     /// </summary>
     private readonly ConcurrentQueue<Packet> _cache = new();
 
+    private bool _cacheEnabled = true;
+    private bool _onlyNewest = false;
+    private object? _receiveActionArgs = null;
+
     /// <summary>
     /// 设置收报机行为
     /// </summary>
     /// <param name="receiveAction">数据包处理行为</param>
     /// <param name="args">报文处理参数</param>
     /// <param name="onlyNewest">是否只处理最新的数据</param>
-    public void SetReceiver(Action<Packet, object?> receiveAction, object? args = null, bool onlyNewest = false)
+    /// <param name="enableCache">是否启用缓存机制</param>
+    public void SetReceiver(Action<Packet, object?> receiveAction, object? args = null, bool onlyNewest = false, bool enableCache = true)
     {
+        _receiveActionArgs = args;
+        _onlyNewest = onlyNewest;
+        _cacheEnabled = enableCache;
         ReceiveAction = receiveAction;
         _cts ??= new CancellationTokenSource();
         Task.Factory.StartNew(() =>
@@ -239,12 +247,7 @@ public class Transceiver<T> where T : class, new()
             {
                 try
                 {
-                    if (ReceiveAction == null)
-                    {
-                        Tracker.WriteWarn($"报文收发器{Name}未设置对报文处理操作");
-                        _cache.Clear();
-                        break;
-                    }
+                    if (!_cacheEnabled) break;
 
                     Packet? temp = null;
                     if (onlyNewest)
@@ -260,7 +263,7 @@ public class Transceiver<T> where T : class, new()
                         temp = _cache.TryDequeue(out var data) ? data : null;
                     }
                     if (temp != null)
-                        ReceiveAction.Invoke(temp, args);
+                        DoReceiveWork(temp);
 
                     Thread.Sleep(10);
                 }
@@ -272,6 +275,24 @@ public class Transceiver<T> where T : class, new()
         }, TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness);
     }
 
+    private void DoReceiveWork(Packet? packet)
+    {
+        try
+        {
+            if (ReceiveAction == null)
+            {
+                Tracker.WriteWarn($"报文收发器{Name}未设置对报文处理操作");
+                return;
+            }
+            if (packet != null)
+                ReceiveAction.Invoke(packet, _receiveActionArgs);
+        }
+        catch (Exception ex)
+        {
+            Tracker.WriteError($"报文接收器【{Name}】处理报文错误：{ex}");
+        }
+    }
+
     private void Receive(IAsyncResult result)
     {
         try
@@ -280,7 +301,9 @@ public class Transceiver<T> where T : class, new()
             IPEndPoint? src = null;
             var buf = _udpClient.EndReceive(result, ref src);
             if (_cts == null || _cts.Token.IsCancellationRequested) return;
-            _cache.Enqueue(new Packet(DateTime.Now, src?.Address.ToString() ?? string.Empty, src?.Port ?? 0, buf));
+            var temp = new Packet(DateTime.Now, src?.Address.ToString() ?? string.Empty, src?.Port ?? 0, buf);
+            if (_cacheEnabled) _cache.Enqueue(temp);
+            else DoReceiveWork(temp);
         }
         catch (Exception ex)
         {
