@@ -13,8 +13,21 @@ public class GeneralHandler : BinaryBaseHandler
     }
 
     /// <inheritdoc />
+    public override bool CanHandle(Type type)
+    {
+        if (type.IsEnum) return true;
+        var code = Type.GetTypeCode(type);
+        return code != TypeCode.Object;
+    }
+
+    /// <inheritdoc />
     public override bool Write(object? value, Type type, PresetSize? presetSize = null)
     {
+        if (type.IsEnum)
+        {
+            type = Enum.GetUnderlyingType(type);
+            value = value == null ? 0 : Convert.ChangeType(value, type);
+        }
         if (value == null && type != typeof(string)) return false;
         var temp = value ?? 0;
         switch (Type.GetTypeCode(type))
@@ -33,6 +46,9 @@ public class GeneralHandler : BinaryBaseHandler
                 return true;
 
             case TypeCode.SByte:
+                Write(unchecked((byte)(sbyte)temp));
+                return true;
+
             case TypeCode.Byte:
                 Write((byte)temp);
                 return true;
@@ -77,8 +93,11 @@ public class GeneralHandler : BinaryBaseHandler
                 Write((string)temp, presetSize?.Value ?? 0);
                 return true;
 
-            case TypeCode.Object:
             case TypeCode.DateTime:
+                Write(((DateTime)temp).Ticks);
+                return true;
+
+            case TypeCode.Object:
             default:
                 break;
         }
@@ -89,6 +108,10 @@ public class GeneralHandler : BinaryBaseHandler
     /// <inheritdoc />
     public override bool TryRead(Type type, ref object? value, PresetSize? presetSize = null)
     {
+        var isEnum = type.IsEnum;
+        if (isEnum)
+            type = Enum.GetUnderlyingType(type);
+
         switch (Type.GetTypeCode(type))
         {
             case TypeCode.Empty:
@@ -108,6 +131,9 @@ public class GeneralHandler : BinaryBaseHandler
                 return true;
 
             case TypeCode.SByte:
+                value = unchecked((sbyte)ReadByte());
+                return true;
+
             case TypeCode.Byte:
                 value = ReadByte();
                 return true;
@@ -153,10 +179,16 @@ public class GeneralHandler : BinaryBaseHandler
                 return true;
 
             case TypeCode.DateTime:
+                value = new DateTime(ReadLong());
+                return true;
+
             case TypeCode.Object:
             default:
                 break;
         }
+
+        if (isEnum && value != null)
+            value = Enum.ToObject(type, value);
 
         return false;
     }

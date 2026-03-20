@@ -15,6 +15,15 @@ public class CollectionHandler : BinaryBaseHandler
     {
     }
 
+    /// <summary>
+    /// 集合读取时ByteLength模式的最大迭代次数，防止死循环
+    /// </summary>
+    public static int MaxByteLengthIterations { get; set; } = 10240;
+
+    /// <inheritdoc />
+    public override bool CanHandle(Type type) =>
+        Type.GetTypeCode(type) == TypeCode.Object && type.IsCollection() && !type.IsDictionary();
+
     /// <inheritdoc />
     public override bool Write(object? value, Type type, PresetSize? presetSize = null)
     {
@@ -124,8 +133,8 @@ public class CollectionHandler : BinaryBaseHandler
         {
             case PresetSizeType.ByteLength:
                 for (var i = 0;
-                     i < 10240 && Serializer.StreamPosition - start < presetSize.Value;
-                     i++) //此处固定上限最多读取10240次，防止死循环
+                     i < MaxByteLengthIterations && Serializer.StreamPosition - start < presetSize.Value;
+                     i++)
                 {
                     var item = Activator.CreateInstance(genericType);
                     Serializer.TryRead(genericType, ref item);

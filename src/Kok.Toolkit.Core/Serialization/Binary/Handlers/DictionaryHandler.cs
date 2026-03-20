@@ -13,6 +13,9 @@ public class DictionaryHandler : BinaryBaseHandler
     }
 
     /// <inheritdoc />
+    public override bool CanHandle(Type type) => type.IsDictionary();
+
+    /// <inheritdoc />
     public override bool Write(object? value, Type type, PresetSize? presetSize = null)
     {
         if (!type.IsDictionary())

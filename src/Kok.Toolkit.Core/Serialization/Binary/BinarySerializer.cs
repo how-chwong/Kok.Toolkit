@@ -1,4 +1,5 @@
-﻿using Kok.Toolkit.Core.Serialization.Binary.Handlers;
+﻿using Kok.Toolkit.Core.Serialization.Binary.Attributes;
+using Kok.Toolkit.Core.Serialization.Binary.Handlers;
 
 namespace Kok.Toolkit.Core.Serialization.Binary;
 
@@ -25,6 +26,7 @@ public class BinarySerializer : IDisposable
     public BinarySerializer()
     {
         _stream = new MemoryStream();
+        _ownsStream = true;
         InitDefaultHandler();
     }
 
@@ -32,9 +34,11 @@ public class BinarySerializer : IDisposable
     /// 从指定流构造二进制序列化器
     /// </summary>
     /// <param name="stream"></param>
-    public BinarySerializer(Stream stream)
+    /// <param name="leaveOpen">是否在Dispose时保留流（不释放）</param>
+    public BinarySerializer(Stream stream, bool leaveOpen = false)
     {
         _stream = stream;
+        _ownsStream = !leaveOpen;
         InitDefaultHandler();
     }
 
@@ -44,11 +48,13 @@ public class BinarySerializer : IDisposable
     /// <param name="stream"></param>
     /// <param name="encoding"></param>
     /// <param name="isLittleEndian"></param>
-    public BinarySerializer(Stream stream, Encoding encoding, bool isLittleEndian = false)
+    /// <param name="leaveOpen">是否在Dispose时保留流（不释放）</param>
+    public BinarySerializer(Stream stream, Encoding encoding, bool isLittleEndian = false, bool leaveOpen = false)
     {
         _stream = stream;
         Encoding = encoding;
         IsLittleEndian = isLittleEndian;
+        _ownsStream = !leaveOpen;
         InitDefaultHandler();
     }
 
@@ -62,12 +68,14 @@ public class BinarySerializer : IDisposable
     private readonly Stream _stream;
 
     /// <summary>
+    /// 标识是否拥有流的所有权（Dispose时是否释放）
+    /// </summary>
+    private readonly bool _ownsStream;
+
+    /// <summary>
     /// 二进制处理器列表
     /// </summary>
-    private readonly IList<IBinaryHandler> _handlerList = new List<IBinaryHandler>();
-
-    //private static Dictionary<string, IBinaryHandler> _handlers = new();//根据类型寻找处理器，类型太多，貌似有点浪费，写初始化太麻烦
-    //todo:可增加一个字典保存自定义处理器，增强扩展，即调用方自行注入处理器，内部匹配到类型后直接调用，跳过默认处理器的处理
+    private readonly List<IBinaryHandler> _handlerList = new();
 
     /// <summary>
     /// 初始化默认处理器
@@ -75,9 +83,19 @@ public class BinarySerializer : IDisposable
     private void InitDefaultHandler()
     {
         _handlerList.Add(new GeneralHandler(this));
+        _handlerList.Add(new IpAddressHandler(this));
         _handlerList.Add(new CollectionHandler(this));
         _handlerList.Add(new DictionaryHandler(this));
         _handlerList.Add(new ObjectHandler(this));
+    }
+
+    /// <summary>
+    /// 注册自定义处理器，优先于默认处理器匹配
+    /// </summary>
+    /// <param name="handler">自定义处理器实例</param>
+    public void RegisterHandler(IBinaryHandler handler)
+    {
+        _handlerList.Insert(0, handler);
     }
 
     #endregion 私有字段及方法
@@ -117,6 +135,7 @@ public class BinarySerializer : IDisposable
     {
         foreach (var handler in _handlerList)
         {
+            if (!handler.CanHandle(type)) continue;
             if (handler.Write(value, type, presetSize))
                 return true;
         }
@@ -131,7 +150,7 @@ public class BinarySerializer : IDisposable
     /// <param name="presetSize"></param>
     /// <returns></returns>
     public bool Write<T>(T value, PresetSize? presetSize = null)
-        => _handlerList.Any(handler => handler.Write(value, typeof(T), presetSize));
+        => _handlerList.Where(h => h.CanHandle(typeof(T))).Any(handler => handler.Write(value, typeof(T), presetSize));
 
     #endregion 写字节流
 
@@ -167,7 +186,14 @@ public class BinarySerializer : IDisposable
     public byte[] Read(int count)
     {
         var data = new byte[count];
-        _stream.Read(data, 0, count);
+        var offset = 0;
+        while (offset < count)
+        {
+            var bytesRead = _stream.Read(data, offset, count - offset);
+            if (bytesRead == 0)
+                throw new EndOfStreamException($"已超出数据的可读取范围，期望读取{count}字节，实际读取{offset}字节");
+            offset += bytesRead;
+        }
         return data;
     }
 
@@ -194,6 +220,7 @@ public class BinarySerializer : IDisposable
     {
         foreach (var handler in _handlerList)
         {
+            if (!handler.CanHandle(type)) continue;
             if (handler.TryRead(type, ref value, presetSize))
                 return true;
         }
@@ -212,6 +239,7 @@ public class BinarySerializer : IDisposable
     {
         foreach (var handler in _handlerList)
         {
+            if (!handler.CanHandle(typeof(T))) continue;
             object? obj = value;
             if (!handler.TryRead(typeof(T), ref obj, presetSize))
                 continue;
@@ -233,8 +261,17 @@ public class BinarySerializer : IDisposable
     {
         if (_stream is MemoryStream ms)
             return ms.ToArray();
-        var bytes = new byte[_stream.Position];
-        _stream.Read(bytes, 0, bytes.Length);
+        var length = _stream.Position;
+        _stream.Seek(0, SeekOrigin.Begin);
+        var bytes = new byte[length];
+        var offset = 0;
+        while (offset < length)
+        {
+            var bytesRead = _stream.Read(bytes, offset, (int)(length - offset));
+            if (bytesRead == 0)
+                throw new EndOfStreamException("从流中读取数据失败");
+            offset += bytesRead;
+        }
         return bytes;
     }
 
@@ -268,7 +305,7 @@ public class BinarySerializer : IDisposable
         try
         {
             message = string.Empty;
-            using var serializer = new BinarySerializer();
+            using var serializer = CreateFromAttribute(typeof(T));
             if (serializer.Write(value))
                 bytes = serializer.GetBytes();
             else
@@ -296,7 +333,7 @@ public class BinarySerializer : IDisposable
         value = default;
         try
         {
-            using var serializer = new BinarySerializer(new MemoryStream(data));
+            using var serializer = CreateFromAttribute(typeof(T), new MemoryStream(data));
             return serializer.TryRead(ref value);
         }
         catch (Exception ex)
@@ -322,10 +359,19 @@ public class BinarySerializer : IDisposable
             message = "指定的文件不存在";
             return false;
         }
-        using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var bytes = new byte[stream.Length];
-        stream.Read(bytes, 0, bytes.Length);
+        var bytes = File.ReadAllBytes(filePath);
         return Deserialize(bytes, out value, out message);
+    }
+
+    /// <summary>
+    /// 根据类型上的BinaryEncodingAttribute构造序列化器
+    /// </summary>
+    private static BinarySerializer CreateFromAttribute(Type type, MemoryStream? stream = null)
+    {
+        var attr = type.GetCustomAttribute<BinaryEncodingAttribute>();
+        if (attr != null)
+            return new BinarySerializer(stream ?? new MemoryStream(), attr.Encoding, attr.IsLittleEndian);
+        return stream != null ? new BinarySerializer(stream) : new BinarySerializer();
     }
 
     #endregion 公开方法
@@ -335,7 +381,8 @@ public class BinarySerializer : IDisposable
     /// </summary>
     public void Dispose()
     {
-        _stream?.Dispose();
+        if (_ownsStream)
+            _stream?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

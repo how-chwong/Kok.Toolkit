@@ -10,6 +10,9 @@ public class IpAddressHandler : BinaryBaseHandler//todo:增加IPv4和IPv6特性�
     {
     }
 
+    /// <inheritdoc />
+    public override bool CanHandle(Type type) => type == typeof(IPAddress);
+
     ///<inheritdoc />
     public override bool Write(object? value, Type type, PresetSize? presetSize = null)
     {

@@ -11,6 +11,13 @@ public interface IBinaryHandler
     BinarySerializer Serializer { get; }
 
     /// <summary>
+    /// 判断是否能处理指定类型
+    /// </summary>
+    /// <param name="type">对象类型</param>
+    /// <returns></returns>
+    bool CanHandle(Type type);
+
+    /// <summary>
     /// 写入对象
     /// </summary>
     /// <param name="value">对象值</param>

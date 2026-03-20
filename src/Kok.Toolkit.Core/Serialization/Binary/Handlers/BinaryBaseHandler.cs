@@ -20,6 +20,9 @@ public abstract class BinaryBaseHandler : IBinaryHandler
     }
 
     /// <inheritdoc cref="IBinaryHandler"/>
+    public abstract bool CanHandle(Type type);
+
+    /// <inheritdoc cref="IBinaryHandler"/>
     public abstract bool Write(object? value, Type type, PresetSize? presetSize = null);
 
     /// <inheritdoc cref="IBinaryHandler"/>
