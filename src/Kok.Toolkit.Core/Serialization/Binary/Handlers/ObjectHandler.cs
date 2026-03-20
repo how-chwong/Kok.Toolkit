@@ -1,5 +1,6 @@
 ﻿using Kok.Toolkit.Core.Extension;
 using Kok.Toolkit.Core.Serialization.Binary.Attributes;
+using System.Collections.Concurrent;
 
 namespace Kok.Toolkit.Core.Serialization.Binary.Handlers;
 
@@ -96,11 +97,14 @@ public class ObjectHandler : BinaryBaseHandler
 
     #region 内部方法
 
+    private static readonly ConcurrentDictionary<Type, List<PropertyInfo>> _propertyCache = new();
+
     //按FieldOrderAttribute特性值升序排列该类型下的属性，如果未指定FieldOrder特性则将该属性放在最后
     private static List<PropertyInfo> GetSortedProperties(Type type) =>
-        type.GetProperties()
-            .OrderBy(p => p.GetCustomAttribute<FieldOrderAttribute>()?.Order ?? int.MaxValue)
-            .ToList();
+        _propertyCache.GetOrAdd(type, t =>
+            t.GetProperties()
+             .OrderBy(p => p.GetCustomAttribute<FieldOrderAttribute>()?.Order ?? int.MaxValue)
+             .ToList());
 
     /// <summary>
     /// 获取预设大小
