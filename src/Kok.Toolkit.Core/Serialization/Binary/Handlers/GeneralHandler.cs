@@ -195,13 +195,13 @@ public class GeneralHandler : BinaryBaseHandler
 
     #region 写基元数据
 
-    //按字节大小端写入
-    private void WriteBytes(byte[] bytes)
+    // 按字节大小端写入，使用Span<byte>避免堆分配
+    private void WriteBytes(Span<byte> bytes)
     {
-        if (bytes.Length == 0)
+        if (bytes.IsEmpty)
             return;
         if (Serializer.IsLittleEndian != BitConverter.IsLittleEndian)
-            Array.Reverse(bytes);
+            bytes.Reverse();
         Serializer.Write(bytes);
     }
 
@@ -211,21 +211,21 @@ public class GeneralHandler : BinaryBaseHandler
 
     private void Write(char value) => Write(Convert.ToByte(value));
 
-    private void Write(ushort value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(ushort value) { Span<byte> b = stackalloc byte[2]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(short value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(short value) { Span<byte> b = stackalloc byte[2]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(uint value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(uint value) { Span<byte> b = stackalloc byte[4]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(int value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(int value) { Span<byte> b = stackalloc byte[4]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(ulong value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(ulong value) { Span<byte> b = stackalloc byte[8]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(long value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(long value) { Span<byte> b = stackalloc byte[8]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(float value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(float value) { Span<byte> b = stackalloc byte[4]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
-    private void Write(double value) => WriteBytes(BitConverter.GetBytes(value));
+    private void Write(double value) { Span<byte> b = stackalloc byte[8]; BitConverter.TryWriteBytes(b, value); WriteBytes(b); }
 
     private void Write(decimal value)
     {
@@ -252,15 +252,12 @@ public class GeneralHandler : BinaryBaseHandler
 
     #region 读基元类型
 
-    //按字节大小端读取
-    private byte[] ReadBytes(int count)
+    // 按字节大小端读取到stackalloc缓冲区，避免堆分配
+    private void ReadBytes(Span<byte> buffer)
     {
-        if (count <= 0)
-            return Array.Empty<byte>();
-        var data = Serializer.Read(count);
+        Serializer.Read(buffer);
         if (Serializer.IsLittleEndian != BitConverter.IsLittleEndian)
-            Array.Reverse(data);
-        return data;
+            buffer.Reverse();
     }
 
     private byte ReadByte() => Serializer.Read();
@@ -269,21 +266,21 @@ public class GeneralHandler : BinaryBaseHandler
 
     private char ReadChar() => Convert.ToChar(ReadByte());
 
-    private ushort ReadUshort() => BitConverter.ToUInt16(ReadBytes(2), 0);
+    private ushort ReadUshort() { Span<byte> b = stackalloc byte[2]; ReadBytes(b); return BitConverter.ToUInt16(b); }
 
-    private short ReadShort() => BitConverter.ToInt16(ReadBytes(2), 0);
+    private short ReadShort() { Span<byte> b = stackalloc byte[2]; ReadBytes(b); return BitConverter.ToInt16(b); }
 
-    private uint ReadUInt() => BitConverter.ToUInt32(ReadBytes(4), 0);
+    private uint ReadUInt() { Span<byte> b = stackalloc byte[4]; ReadBytes(b); return BitConverter.ToUInt32(b); }
 
-    private int ReadInt() => BitConverter.ToInt32(ReadBytes(4), 0);
+    private int ReadInt() { Span<byte> b = stackalloc byte[4]; ReadBytes(b); return BitConverter.ToInt32(b); }
 
-    private ulong ReadULong() => BitConverter.ToUInt64(ReadBytes(8), 0);
+    private ulong ReadULong() { Span<byte> b = stackalloc byte[8]; ReadBytes(b); return BitConverter.ToUInt64(b); }
 
-    private long ReadLong() => BitConverter.ToInt64(ReadBytes(8), 0);
+    private long ReadLong() { Span<byte> b = stackalloc byte[8]; ReadBytes(b); return BitConverter.ToInt64(b); }
 
-    private float ReadFloat() => BitConverter.ToSingle(ReadBytes(4), 0);
+    private float ReadFloat() { Span<byte> b = stackalloc byte[4]; ReadBytes(b); return BitConverter.ToSingle(b); }
 
-    private double ReadDouble() => BitConverter.ToDouble(ReadBytes(8), 0);
+    private double ReadDouble() { Span<byte> b = stackalloc byte[8]; ReadBytes(b); return BitConverter.ToDouble(b); }
 
     private decimal ReadDecimal()
     {
@@ -297,8 +294,11 @@ public class GeneralHandler : BinaryBaseHandler
     {
         if (presetLength <= 0)
             presetLength = Serializer.TryReadItemCount();
-        var data = Serializer.Read(presetLength);
-        return Serializer.Encoding.GetString(data);
+        if (presetLength <= 0)
+            return string.Empty;
+        Span<byte> buffer = presetLength <= 256 ? stackalloc byte[presetLength] : new byte[presetLength];
+        Serializer.Read(buffer);
+        return Serializer.Encoding.GetString(buffer);
     }
 
     #endregion 读基元类型

@@ -1,5 +1,6 @@
 ﻿using Kok.Toolkit.Core.Serialization.Binary.Attributes;
 using Kok.Toolkit.Core.Serialization.Binary.Handlers;
+using System.Runtime.InteropServices;
 
 namespace Kok.Toolkit.Core.Serialization.Binary;
 
@@ -115,6 +116,12 @@ public class BinarySerializer : IDisposable
     public void Write(byte[] value) => _stream.Write(value, 0, value.Length);
 
     /// <summary>
+    /// 向当前流中写入字节片段（支持stackalloc缓冲区，零堆分配）
+    /// </summary>
+    /// <param name="value">待写入字节片段</param>
+    public void Write(ReadOnlySpan<byte> value) => _stream.Write(value);
+
+    /// <summary>
     /// 写入集合内的Item数量
     /// </summary>
     /// <param name="value"></param>
@@ -186,15 +193,24 @@ public class BinarySerializer : IDisposable
     public byte[] Read(int count)
     {
         var data = new byte[count];
+        Read(data.AsSpan());
+        return data;
+    }
+
+    /// <summary>
+    /// 从当前流中读取字节，填充到指定缓冲区（支持stackalloc，零堆分配）
+    /// </summary>
+    /// <param name="buffer">接收数据的缓冲区</param>
+    public void Read(Span<byte> buffer)
+    {
         var offset = 0;
-        while (offset < count)
+        while (offset < buffer.Length)
         {
-            var bytesRead = _stream.Read(data, offset, count - offset);
+            var bytesRead = _stream.Read(buffer[offset..]);
             if (bytesRead == 0)
-                throw new EndOfStreamException($"已超出数据的可读取范围，期望读取{count}字节，实际读取{offset}字节");
+                throw new EndOfStreamException($"已超出数据的可读取范围，期望读取{buffer.Length}字节，实际读取{offset}字节");
             offset += bytesRead;
         }
-        return data;
     }
 
     /// <summary>
@@ -328,12 +344,28 @@ public class BinarySerializer : IDisposable
     /// <param name="message">反序列化失败的错误信息，若成功则为空</param>
     /// <returns></returns>
     public static bool Deserialize<T>(byte[] data, out T? value, out string message)
+        => Deserialize<T>((ReadOnlyMemory<byte>)data, out value, out message);
+
+    /// <summary>
+    /// 将ReadOnlyMemory反序列化为指定类型，数据由byte[]支持时零拷贝
+    /// </summary>
+    /// <typeparam name="T">待反序列化实例的类型</typeparam>
+    /// <param name="data">待反序列化的内存数据</param>
+    /// <param name="value">反序列化得到的实例</param>
+    /// <param name="message">反序列化失败的错误信息，若成功则为空</param>
+    /// <returns></returns>
+    public static bool Deserialize<T>(ReadOnlyMemory<byte> data, out T? value, out string message)
     {
         message = string.Empty;
         value = default;
         try
         {
-            using var serializer = CreateFromAttribute(typeof(T), new MemoryStream(data));
+            MemoryStream stream;
+            if (MemoryMarshal.TryGetArray(data, out var segment))
+                stream = new MemoryStream(segment.Array!, segment.Offset, segment.Count, writable: false);
+            else
+                stream = new MemoryStream(data.ToArray());
+            using var serializer = CreateFromAttribute(typeof(T), stream);
             return serializer.TryRead(ref value);
         }
         catch (Exception ex)
@@ -342,6 +374,17 @@ public class BinarySerializer : IDisposable
             return false;
         }
     }
+
+    /// <summary>
+    /// 将ReadOnlySpan反序列化为指定类型
+    /// </summary>
+    /// <typeparam name="T">待反序列化实例的类型</typeparam>
+    /// <param name="data">待反序列化的字节片段</param>
+    /// <param name="value">反序列化得到的实例</param>
+    /// <param name="message">反序列化失败的错误信息，若成功则为空</param>
+    /// <returns></returns>
+    public static bool Deserialize<T>(ReadOnlySpan<byte> data, out T? value, out string message)
+        => Deserialize<T>((ReadOnlyMemory<byte>)data.ToArray(), out value, out message);
 
     /// <summary>
     /// 从指定的二进制文件反序列化
@@ -366,7 +409,7 @@ public class BinarySerializer : IDisposable
     /// <summary>
     /// 根据类型上的BinaryEncodingAttribute构造序列化器
     /// </summary>
-    private static BinarySerializer CreateFromAttribute(Type type, MemoryStream? stream = null)
+    private static BinarySerializer CreateFromAttribute(Type type, Stream? stream = null)
     {
         var attr = type.GetCustomAttribute<BinaryEncodingAttribute>();
         if (attr != null)
