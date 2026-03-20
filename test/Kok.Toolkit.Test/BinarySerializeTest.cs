@@ -69,6 +69,53 @@ public class BinarySerializeTest
 
         Assert.True(BinarySerializer.Serialize(data, out var temp, out _));
     }
+    [Fact]
+    public void ByteArrayPropertyOrderTest()
+    {
+    // 排列：类中 byte[] 前有其他属性，验证序列化后前序字段不被覆盖
+    var data = new PacketWithByteArray
+    {
+        Header = 0xAA,
+        Length = 6,
+        Payload = new byte[] { 1, 2, 3, 4, 5, 6 },
+        Footer = 0xFF
+    };
+
+    Assert.True(BinarySerializer.Serialize(data, out var bytes, out var msg), msg);
+
+    // 手动验证字节布局：
+    // [0]      = Header (1 byte = 0xAA)
+    // [1]      = Length (1 byte = 6)
+    // [2..3]   = Payload 数组长度 int32 前两字节（WriteItemCount 写的是 int，4字节）
+    // 此处使用 CollectionItemCount 关联 Length，不写 count 头，直接写 6 字节
+    // [2..7]   = Payload 内容
+    // [8]      = Footer (1 byte = 0xFF)
+    Assert.True(BinarySerializer.Deserialize<PacketWithByteArray>(bytes, out var result, out var msg2), msg2);
+
+    Assert.NotNull(result);
+    Assert.Equal(0xAA, result.Header);      // 前序字段未被覆盖
+    Assert.Equal(6, result.Length);
+    Assert.Equal(0xFF, result.Footer);      // 后续字段正常
+    Assert.NotNull(result.Payload);
+    Assert.Equal(6, result.Payload.Length);
+    for (var i = 0; i < data.Payload.Length; i++)
+        Assert.Equal(data.Payload[i], result.Payload[i]);
+    }
+}
+public class PacketWithByteArray
+{
+    [FieldOrder(0)]
+    public byte Header { get; set; }
+
+    [FieldOrder(1)]
+    public byte Length { get; set; }
+
+    [FieldOrder(2)]
+    [CollectionItemCount(nameof(Length))]
+    public byte[] Payload { get; set; } = Array.Empty<byte>();
+
+    [FieldOrder(3)]
+    public byte Footer { get; set; }
 }
 
 public class TestMessage<T> where T : class, new()

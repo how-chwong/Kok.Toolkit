@@ -49,7 +49,7 @@ public class CollectionHandler : BinaryBaseHandler
             }
             //按实际value长度写入字节
             if (temp is { Length: > 0 })
-                Array.ForEach(temp, b => handler.Write(b, typeof(byte)));
+                Serializer.Write(temp); 
             return true;
         }
 

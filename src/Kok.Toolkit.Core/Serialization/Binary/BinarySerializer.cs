@@ -114,7 +114,14 @@ public class BinarySerializer : IDisposable
     /// <param name="presetSize"></param>
     /// <returns></returns>
     public bool Write(object? value, Type type, PresetSize? presetSize = null)
-        => _handlerList.Any(handler => handler.Write(value, type, presetSize));
+    {
+        foreach (var handler in _handlerList)
+        {
+            if (handler.Write(value, type, presetSize))
+                return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// 写入字节
