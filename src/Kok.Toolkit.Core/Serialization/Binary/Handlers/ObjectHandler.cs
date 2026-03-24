@@ -32,8 +32,6 @@ public class ObjectHandler : BinaryBaseHandler
         if (!CanHandle(type))
             return false;
 
-        _crcStartByteLocations.Clear();
-
         if (value == null)
             throw new Exception($"{type.Name}类实例不能为空");
         var propertyInfos = GetSortedProperties(type);
